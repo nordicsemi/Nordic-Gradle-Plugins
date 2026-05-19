@@ -118,6 +118,13 @@ gradlePlugin {
             implementationClass = "AndroidKotlinConventionPlugin"
             tags.addAll("nordicsemi", "Android", "kotlin")
         }
+        register("android.kmp") {
+            id = "no.nordicsemi.android.plugin.kotlin.kmp"
+            displayName = "Kotlin plugin for Android modules"
+            description = "Plugin enabling Kotlin for Android modules."
+            implementationClass = "KmpAndroidSdkPlugin"
+            tags.addAll("nordicsemi", "Android", "kotlin")
+        }
         register("jvm.kotlin") {
             id = "no.nordicsemi.jvm.plugin.kotlin"
             displayName = "Kotlin plugin for JVM projects"
@@ -135,7 +142,8 @@ gradlePlugin {
         register("android.nexus") {
             id = "no.nordicsemi.android.plugin.nexus"
             displayName = "Nexus plugin for Android projects"
-            description = "Plugin creating a task for publishing Android libraries to Nexus repository."
+            description =
+                "Plugin creating a task for publishing Android libraries to Nexus repository."
             implementationClass = "AndroidNexusRepositoryPlugin"
             tags.addAll("nordicsemi", "Android", "nexus", "publish")
         }
