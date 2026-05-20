@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Nordic Semiconductor
+ * Copyright (c) 2026, Nordic Semiconductor
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
@@ -29,18 +29,52 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import no.nordicsemi.android.buildlogic.configureKotlinJvm
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
+import no.nordicsemi.android.AppConst
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
-class JvmKotlinConventionPlugin : Plugin<Project> {
+/**
+ * Convention plugin for Android libraries in Kotlin Multiplatform projects.
+ *
+ * Note, if you need a KMP project without `androidMain`, use the `org.jetbrains.kotlin.multiplatform`
+ * plugin directly and configure the targets manually.
+ */
+class AndroidKmpLibraryConventionPlugin : Plugin<Project> {
+
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
-                apply("org.jetbrains.kotlin.jvm")
+                apply("org.jetbrains.kotlin.multiplatform")
+                apply("com.android.kotlin.multiplatform.library")
             }
 
-            configureKotlinJvm()
+            extensions.configure<KotlinMultiplatformExtension> {
+                targets.withType<KotlinMultiplatformAndroidLibraryTarget> {
+                    compileSdk {
+                        version = release(AppConst.COMPILE_SDK) {
+                            minorApiLevel = 1
+                        }
+                    }
+
+                    minSdk {
+                        version = release(AppConst.MIN_SDK)
+                    }
+
+                    @Suppress("UnstableApiUsage")
+                    optimization {
+                        minify = false
+                        consumerKeepRules.apply {
+                            publish = true
+                            file("module-rules.pro")
+                        }
+                    }
+                }
+
+            }
         }
     }
 }

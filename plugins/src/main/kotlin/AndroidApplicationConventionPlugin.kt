@@ -37,7 +37,11 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 
+/**
+ * Sets up the `com.android.application` plugin with the default configuration.
+ */
 class AndroidApplicationConventionPlugin : Plugin<Project> {
+
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
@@ -76,19 +80,16 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                         isMinifyEnabled = true
                         isShrinkResources = true
                         signingConfig = signingConfigs.getByName("release")
-                        // The proguard files will be used to generate the release.
                         proguardFiles(
                             getDefaultProguardFile("proguard-android-optimize.txt"),
                             file("proguard-rules.pro")
                         )
-                        // Add version name and code to the manifest.
                         buildConfigField("String", "VERSION_NAME", "\"${getVersionNameFromTags()}\"")
                         buildConfigField("String", "VERSION_CODE", "\"${getVersionCodeFromTags()}\"")
                     }
 
                     getByName("debug") {
                         isMinifyEnabled = false
-                        // Add version name and code to the manifest.
                         buildConfigField("String", "VERSION_NAME", "\"debug\"")
                         buildConfigField("String", "VERSION_CODE", "\"${getVersionCodeFromTags()}\"")
                     }

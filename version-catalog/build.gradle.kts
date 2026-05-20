@@ -38,7 +38,7 @@ apply(from = "../gradle/git-tag-version.gradle.kts")
 
 val versionNameFromTags: String by extra
 
-group = "no.nordicsemi.android.gradle"
+group = "no.nordicsemi.gradle"
 version = versionNameFromTags
 
 catalog {
@@ -59,7 +59,7 @@ publishing {
             pom {
                 name.set("Nordic version catalog for Android")
                 description.set("Nordic version catalog for Android")
-                url.set("https://github.com/NordicSemiconductor/Android-Gradle-Plugins")
+                url.set("https://github.com/nordicsemi/Nordic-Gradle-Plugins")
                 packaging = "toml"
 
                 // https://maven.apache.org/pom.html#licenses
@@ -73,9 +73,9 @@ publishing {
 
                 // https://maven.apache.org/pom.html#scm
                 scm {
-                    url.set("https://github.com/NordicSemiconductor/Android-Gradle-Plugins")
-                    connection.set("scm:git@github.com:NordicSemiconductor/Android-Gradle-Plugins.git")
-                    developerConnection.set("scm:git@github.com:NordicSemiconductor/Android-Gradle-Plugins.git")
+                    url.set("https://github.com/nordicsemi/Nordic-Gradle-Plugins")
+                    connection.set("scm:git@github.com:nordicsemi/Nordic-Gradle-Plugins.git")
+                    developerConnection.set("scm:git@github.com:nordicsemi/Nordic-Gradle-Plugins.git")
                 }
 
                 // https://maven.apache.org/pom.html#organization

@@ -29,25 +29,19 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import no.nordicsemi.android.buildlogic.libs
+import no.nordicsemi.android.buildlogic.configureHilt
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.dependencies
 
-class AndroidHiltConventionPlugin : Plugin<Project> {
+/**
+ * Adds Hilt to Android projects.
+ */
+class HiltConventionPlugin : Plugin<Project> {
+
     override fun apply(target: Project) {
         with(target) {
-            with(pluginManager) {
-                apply(AndroidKotlinConventionPlugin::class.java)
-                apply("com.google.devtools.ksp")
-                apply("dagger.hilt.android.plugin")
-            }
-
-            dependencies {
-                add("implementation", libs.findLibrary("hilt.android").get())
-                add("ksp", libs.findLibrary("hilt.android.compiler").get())
-                add("kspTest", libs.findLibrary("hilt.android.compiler").get())
-                add("kspAndroidTest", libs.findLibrary("hilt.android.compiler").get())
+            pluginManager.withPlugin("com.android.base") {
+                configureHilt()
             }
         }
     }

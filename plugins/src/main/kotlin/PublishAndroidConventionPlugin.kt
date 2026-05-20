@@ -29,7 +29,8 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import no.nordicsemi.android.NexusRepositoryPluginExt
+import com.android.build.api.dsl.LibraryExtension
+import no.nordicsemi.android.NordicPublishingExtension
 import no.nordicsemi.android.buildlogic.getVersionNameFromTags
 import no.nordicsemi.android.from
 import no.nordicsemi.android.tasks.ReleaseStagingRepositoriesTask
@@ -37,10 +38,10 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.logging.LogLevel
-import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.get
@@ -51,22 +52,22 @@ import org.jetbrains.dokka.gradle.DokkaExtension
 import org.jetbrains.dokka.gradle.engine.plugins.DokkaHtmlPluginParameters
 import java.util.Calendar
 
-class JvmNexusRepositoryPlugin : Plugin<Project> {
+class PublishAndroidConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
-                apply("org.jetbrains.kotlin.jvm")
+                apply("com.android.library")
                 apply("maven-publish")
                 apply("signing")
                 apply("org.jetbrains.dokka")
             }
 
             // Default Nordic group.
-            group = "no.nordicsemi.kotlin"
+            group = "no.nordicsemi.android"
 
-            val nexusPluginExt = extensions.create("nordicNexusPublishing", NexusRepositoryPluginExt::class.java)
-            val library = extensions.getByType<JavaPluginExtension>()
+            val nordicPublishing = extensions.create("nordicPublishing", NordicPublishingExtension::class.java)
+            val library = extensions.getByType<LibraryExtension>()
             val signing = extensions.getByType<SigningExtension>()
             val dokka = try {
                 extensions.getByType<DokkaExtension>()
@@ -84,10 +85,14 @@ class JvmNexusRepositoryPlugin : Plugin<Project> {
             extra.set("signing.secretKeyRingFile", "${project.rootDir.path}/sec.gpg")
 
             // Create a software component with the release variant.
-            library.withSourcesJar()
-            // Javadoc fails with Java 17:
-            // https://github.com/Kotlin/dokka/issues/2956
-            // library.withJavadocJar()
+            library.publishing {
+                singleVariant("release") {
+                    withSourcesJar()
+                    // Javadoc fails with Java 17:
+                    // https://github.com/Kotlin/dokka/issues/2956
+                    // withJavadocJar()
+                }
+            }
 
             // Instead, configure Dokka to generate HTML docs for the module.
             dokka?.apply {
@@ -112,7 +117,7 @@ class JvmNexusRepositoryPlugin : Plugin<Project> {
                     tasks.register<Jar>("dokkaHtmlJar").configure {
                         dependsOn(tasks.named("dokkaGenerate"))
                         from(outputDirectory)
-                        archiveClassifier.set("javadoc")
+                        archiveClassifier.set("html-docs")
                     }
                 }
                 // Add Dokka dependency to root project.
@@ -130,8 +135,9 @@ class JvmNexusRepositoryPlugin : Plugin<Project> {
                 logger.error("ERROR: Dokka V2 could not be applied, add \"org.jetbrains.dokka.experimental.gradle.pluginMode=V2Enabled\" to gradle.properties.")
             }
 
+            // TODO Remove afterEvaluate when `artifactId` and `groupId` are converted to lazy properties.
             afterEvaluate {
-                publishing {
+                extensions.configure<PublishingExtension> {
                     repositories {
                         maven {
                             name = "ossrh-staging-api"
@@ -145,17 +151,18 @@ class JvmNexusRepositoryPlugin : Plugin<Project> {
                     publications {
                         val publication = create("library", MavenPublication::class.java) {
                             // Set publication properties.
-                            with (nexusPluginExt) {
-                                artifactId = POM_ARTIFACT_ID
-                                version = getVersionNameFromTags()
-                                groupId = POM_GROUP ?: group.toString()
+                            version = getVersionNameFromTags()
+                            with(nordicPublishing) {
+                                // TODO Use artifactId.set(pomArtifactId) when they are converted to Property
+                                artifactId = pomArtifactId.get()
+                                groupId = pomGroup.getOrElse(group.toString())
                             }
                             // Set the component to be published.
-                            from(components["java"])
+                            from(components["release"])
                             // Apply POM configuration.
                             pom {
-                                from(nexusPluginExt)
-                                packaging = "jar"
+                                from(nordicPublishing)
+                                packaging = "aar"
                             }
                             // Add Dokka HTML docs.
                             artifact(tasks.named("dokkaHtmlJar"))
@@ -170,10 +177,5 @@ class JvmNexusRepositoryPlugin : Plugin<Project> {
                 } catch (_: Throwable) { }
             }
         }
-    }
-
-    private fun Project.publishing(configuration: PublishingExtension.() -> Unit) {
-        val publishing = extensions.getByType<PublishingExtension>()
-        configuration(publishing)
     }
 }

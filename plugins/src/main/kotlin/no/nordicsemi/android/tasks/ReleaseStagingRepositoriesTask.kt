@@ -4,6 +4,7 @@ import okhttp3.OkHttpClient
 import org.gradle.api.DefaultTask
 import org.gradle.api.publish.plugins.PublishingPlugin
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -20,6 +21,9 @@ import kotlin.time.Duration.Companion.seconds
  * [Documentation](https://central.sonatype.org/publish/publish-portal-ossrh-staging-api/#post-to-manualuploaddefaultrepositorynamespace)
  * [Try it out](https://ossrh-staging-api.central.sonatype.com/swagger-ui)
  */
+@DisableCachingByDefault(
+    because = "This task performs a network operation to upload the staging repository, which is not cacheable."
+)
 open class ReleaseStagingRepositoriesTask : DefaultTask() {
 
     @Suppress("unused")

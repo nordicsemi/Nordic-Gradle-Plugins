@@ -29,18 +29,35 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import no.nordicsemi.android.buildlogic.configureKotlinKmp
-import org.gradle.api.Plugin
+package no.nordicsemi.android.buildlogic
+
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.dependencies
 
-class KmpKotlinConventionPlugin : Plugin<Project> {
-    override fun apply(target: Project) {
-        with(target) {
-            with(pluginManager) {
-                apply("org.jetbrains.kotlin.multiplatform")
-            }
+/**
+ * Configure Hilt for the project.
+ */
+internal fun Project.configureHilt() {
+    with(pluginManager) {
+        apply("com.google.devtools.ksp")
+        apply("com.google.dagger.hilt.android")
+    }
 
-            configureKotlinKmp()
-        }
+    dependencies {
+        add("implementation", libs.findLibrary("hilt.android").get())
+        add("ksp", libs.findLibrary("hilt.android.compiler").get())
+        add("kspTest", libs.findLibrary("hilt.android.compiler").get())
+        add("kspAndroidTest", libs.findLibrary("hilt.android.compiler").get())
+    }
+}
+
+/**
+ * Configure Hilt ViewModel for Compose.
+ */
+internal fun Project.configureHiltViewModel() {
+    dependencies {
+        add("implementation", libs.findLibrary("androidx.hilt.lifecycle.viewmodel.compose").get())
+        add("implementation", libs.findLibrary("androidx.lifecycle.runtime.compose").get())
+        add("implementation", libs.findLibrary("androidx.lifecycle.viewModel.compose").get())
     }
 }

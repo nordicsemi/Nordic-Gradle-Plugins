@@ -29,21 +29,49 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.android.build.api.dsl.ApplicationExtension
-import com.android.build.api.dsl.LibraryExtension
-import no.nordicsemi.android.buildlogic.configureKotlinAndroid
+import com.android.build.api.dsl.CommonExtension
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension
+import no.nordicsemi.android.buildlogic.configureAndroidCompose
+import no.nordicsemi.android.buildlogic.configureAndroidKmpCompose
+import no.nordicsemi.android.buildlogic.configureComposeMultiplatform
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.findByType
+import org.gradle.kotlin.dsl.configure
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
-class AndroidKotlinConventionPlugin : Plugin<Project> {
+/**
+ * Adds Compose to the project.
+ *
+ * For Android projects, it adds Jetpack Compose.
+ * For KMP projects, it adds JetBrains Compose Multiplatform.
+ */
+class ComposeConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
-            extensions.findByType<LibraryExtension>()?.apply {
-                configureKotlinAndroid(this)
+            with(pluginManager) {
+                apply(KotlinConventionPlugin::class.java)
+                apply("org.jetbrains.kotlin.plugin.compose")
             }
-            extensions.findByType<ApplicationExtension>()?.apply {
-                configureKotlinAndroid(this)
+
+            // 1. Handle standard Android App/Library
+            pluginManager.withPlugin("com.android.base") {
+                extensions.configure<CommonExtension> {
+                    configureAndroidCompose(this)
+                }
+            }
+
+            // 2. Handle KMP shared logic (iOS, Desktop, etc.)
+            pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
+                extensions.configure<KotlinMultiplatformExtension> {
+                    configureComposeMultiplatform(this)
+                }
+            }
+
+            // 3. Handle the new Android-KMP target specifics
+            pluginManager.withPlugin("com.android.kotlin.multiplatform.library") {
+                extensions.configure<KotlinMultiplatformAndroidLibraryExtension> {
+                    configureAndroidKmpCompose(this)
+                }
             }
         }
     }

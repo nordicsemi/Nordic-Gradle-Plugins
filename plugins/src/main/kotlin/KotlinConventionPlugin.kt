@@ -29,26 +29,40 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package no.nordicsemi
-
-import org.gradle.api.JavaVersion
+import com.android.build.api.dsl.CommonExtension
+import no.nordicsemi.android.buildlogic.configureKotlinAndroid
+import no.nordicsemi.android.buildlogic.configureKotlinJvm
+import no.nordicsemi.android.buildlogic.configureKotlinKmp
+import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.gradle.kotlin.dsl.configure
 
+/**
+ * Sets up Kotlin for the project.
+ *
+ * It automatically detects the project type (Android, KMP, or JVM) and applies
+ * the appropriate configuration using reactive plugin callbacks.
+ */
+class KotlinConventionPlugin : Plugin<Project> {
 
-internal fun JavaVersion.asJvmTarget(): JvmTarget {
-    return JvmTarget.fromTarget(majorVersion)
+    override fun apply(target: Project) {
+        with(target) {
+            // Configure Android projects
+            pluginManager.withPlugin("com.android.base") {
+                extensions.configure<CommonExtension> {
+                    configureKotlinAndroid(this)
+                }
+            }
+
+            // Configure Kotlin Multiplatform projects
+            pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
+                configureKotlinKmp()
+            }
+
+            // Configure pure JVM projects
+            pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
+                configureKotlinJvm()
+            }
+        }
+    }
 }
-
-internal val Project.hasAndroidKmpPlugin: Boolean
-    get() = plugins
-        .hasPlugin("com.android.kotlin.multiplatform.library")
-
-internal val Project.hasAndroidLibPlugin: Boolean
-    get() = plugins.hasPlugin("com.android.library")
-
-internal val Project.hasAndroidAppPlugin: Boolean
-    get() = plugins.hasPlugin("com.android.application")
-
-internal val Project.hasAndroidPlugin: Boolean
-    get() = hasAndroidAppPlugin || hasAndroidLibPlugin
