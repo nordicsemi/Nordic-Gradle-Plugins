@@ -33,6 +33,7 @@ import com.android.build.api.dsl.LibraryExtension
 import no.nordicsemi.android.AppConst
 import no.nordicsemi.android.buildlogic.getVersionCodeFromTags
 import no.nordicsemi.android.buildlogic.getVersionNameFromTags
+import no.nordicsemi.android.buildlogic.minSdk
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -56,7 +57,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 }
 
                 defaultConfig {
-                    minSdk = AppConst.MIN_SDK
+                    minSdk = target.minSdk
                 }
 
                 buildFeatures {

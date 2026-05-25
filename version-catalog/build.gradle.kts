@@ -38,12 +38,14 @@ apply(from = "../gradle/git-tag-version.gradle.kts")
 
 val versionNameFromTags: String by extra
 
+val isLegacy = providers.gradleProperty("nordic.legacy").map { it.toBoolean() }.getOrElse(false)
+
 group = "no.nordicsemi.gradle"
-version = versionNameFromTags
+version = if (isLegacy) "$versionNameFromTags-legacy" else versionNameFromTags
 
 catalog {
     versionCatalog {
-        from(files("../gradle/libs.versions.toml"))
+        from(files(if (isLegacy) "../gradle/libs-legacy.versions.toml" else "../gradle/libs.versions.toml"))
     }
 }
 

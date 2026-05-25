@@ -40,9 +40,10 @@ plugins {
 apply(from = "../gradle/git-tag-version.gradle.kts")
 
 val versionNameFromTags: String by extra
+val isLegacy = providers.gradleProperty("nordic.legacy").map { it.toBoolean() }.getOrElse(false)
 
 group = "no.nordicsemi.gradle"
-version = versionNameFromTags
+version = if (isLegacy) "$versionNameFromTags-legacy" else versionNameFromTags
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21

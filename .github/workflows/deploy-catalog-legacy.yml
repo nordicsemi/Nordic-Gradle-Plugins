@@ -2,7 +2,7 @@ name: Deploy version catalog to Maven Central
 on:
   workflow_dispatch:
 jobs:
-  deployVersionCatalog:
+  deployLegacyVersionCatalog:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -22,4 +22,4 @@ jobs:
         run: |
           echo "${{ secrets.GPG_FILE }}" > sec.gpg.asc
           gpg -d --passphrase "${{ secrets.GPG_FILE_PSWD }}" --batch sec.gpg.asc > sec.gpg
-          fastlane deployVersionCatalog
+          fastlane deployLegacyVersionCatalog
