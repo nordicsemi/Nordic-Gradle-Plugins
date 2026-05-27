@@ -21,6 +21,27 @@ versionCatalogs {
 > [!Note]
 > The group name has changed from `no.nordicsemi.android.gradle` to `no.nordicsemi.gradle`.
 
+See [libs.versions.toml](https://github.com/nordicsemi/Nordic-Gradle-Plugins/blob/main/gradle/libs.versions.toml).
+
+### Targeting Android SDK 21?
+
+Use `version-catalog-min-sdk-21` instead:
+```kotlin
+versionCatalogs {
+    create("libs") {
+        // Old:
+        // from("no.nordicsemi.android.gradle:version-catalog:2.11.5")
+        
+        // New:
+        from("no.nordicsemi.gradle:version-catalog-min-sdk-21:3.0")
+    }
+}
+```
+
+All the Android dependencies are frozen in the last version that targeted SDK 21.
+
+See [libs.versions.21.toml](https://github.com/nordicsemi/Nordic-Gradle-Plugins/blob/main/gradle/libs.versions.21.toml).
+
 ## Modular Plugin Architecture
 
 Plugins have been split into **Base** plugins (defining the project type) and **Feature** plugins 
