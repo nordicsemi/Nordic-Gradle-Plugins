@@ -27,8 +27,8 @@ platform :android do
     gradle(task: ":version-catalog:publishToSonatype closeAndReleaseSonatypeStagingRepository")
   end
 
-  desc "Deploy legacy version catalog to Maven Central."
-  lane :deployLegacyVersionCatalog do
+  desc "Deploy minSdk 21 version catalog to Maven Central."
+  lane :deployVersionCatalogMinSdk21 do
     gradle(task: ":version-catalog-min-sdk-21:publishToSonatype closeAndReleaseSonatypeStagingRepository")
   end
 

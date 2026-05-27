@@ -12,30 +12,18 @@ The build system automatically detects and configures additional version catalog
 ## How to Release
 
 ### 1. Release All Catalogs
-Run the publish command. All detected catalogs will be published as separate artifacts to Maven Central.
-```bash
-./gradlew :version-catalog:publishToSonatype
-```
-Wait! The command above only publishes the standard one. To publish all, you can run:
-```bash
-./gradlew publishToSonatype
-```
-Or specifically:
+Two GitHub Actions are available to publish the version catalogs:
+- **Deploy Version Catalog** (`deploy-catalog.yml`): Publishes the standard catalog (`no.nordicsemi.gradle:version-catalog`).
+- **Deploy Version Catalog (minSdk 21)** (`deploy-catalog-min-sdk-21.yml`): Publishes the minSdk 21 catalog (`no.nordicsemi.gradle:version-catalog-min-sdk-21`).
+
+Alternatively, run the publish command manually:
 ```bash
 ./gradlew :version-catalog:publishToSonatype :version-catalog-min-sdk-21:publishToSonatype
 ```
 
 ### 2. Release Plugins
-The plugins rely on a Gradle property to choose which `minSdk` to target in the generated build standards.
-
-**Release Standard Plugins:**
 ```bash
 ./gradlew :plugins:publishPlugins
-```
-
-**Release Legacy Plugins (targeting minSdk 21):**
-```bash
-./gradlew :plugins:publishPlugins -Pnordic.legacy=true
 ```
 
 ## How to Consume Version Catalogs
