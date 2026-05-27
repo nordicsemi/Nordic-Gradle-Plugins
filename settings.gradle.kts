@@ -42,3 +42,16 @@ rootProject.name = "Nordic Gradle Plugins"
 
 include(":plugins")
 include(":version-catalog")
+
+// Search for version catalog files in the Gradle directory.
+// Files matching libs.versions.<sdk>.toml will be included as separate projects.
+file("gradle").listFiles()?.forEach { file ->
+    val regex = Regex("libs\\.versions\\.(\\d+)\\.toml")
+    val match = regex.find(file.name)
+    if (match != null) {
+        val sdk = match.groupValues[1]
+        val projectName = "version-catalog-min-sdk-$sdk"
+        include(":$projectName")
+        project(":$projectName").projectDir = file("version-catalog")
+    }
+}
