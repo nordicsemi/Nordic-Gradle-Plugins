@@ -18,7 +18,7 @@ Two GitHub Actions are available to publish the version catalogs:
 
 Alternatively, run the publish command manually:
 ```bash
-./gradlew :version-catalog:publishToSonatype :version-catalog-min-sdk-21:publishToSonatype
+./gradlew :version-catalog:publishToSonatype :version-catalog-min-sdk-21:publishToSonatype closeAndReleaseSonatypeStagingRepository
 ```
 
 ### 2. Release Plugins
