@@ -1,9 +1,14 @@
 # Migration Guide: 2.x to 3.0
 
-Version 3.0 introduces a modular architecture that separates base project configurations from optional features. 
-This version also upgrades the baseline to Java 21 and aligns with AGP 9.0+ and Kotlin 2.x standards.
+Version 3.0 introduces modular plugin structure, with named plugin IDs and modified functionality.
+
+Also, a new version catalog for applications and libraries targeting Android API 21.
 
 ## Version Catalog
+
+The artifact ID of Nordic Gradle Plugins has changed from `no.nordicsemi.android.gradle` to `no.nordicsemi.gradle`.
+
+See: [Maven Central](https://central.sonatype.com/search?q=no.nordicsemi.gradle).
 
 Update the version of the `version-catalog` dependency in your `settings.gradle.kts` file to `3.0`:
 
@@ -18,8 +23,6 @@ versionCatalogs {
     }
 }
 ```
-> [!Note]
-> The group name has changed from `no.nordicsemi.android.gradle` to `no.nordicsemi.gradle`.
 
 See [libs.versions.toml](https://github.com/nordicsemi/Nordic-Gradle-Plugins/blob/main/gradle/libs.versions.toml).
 
@@ -38,7 +41,9 @@ versionCatalogs {
 }
 ```
 
-All the Android dependencies are frozen in the last version that targeted SDK 21.
+All the Android dependencies in this version catalog are frozen in their last version that targeted SDK 21.
+
+Other, non-Android related dependencies will continue to be updated (i.e. Kotlin version, etc.).
 
 See [libs.versions.21.toml](https://github.com/nordicsemi/Nordic-Gradle-Plugins/blob/main/gradle/libs.versions.21.toml).
 
