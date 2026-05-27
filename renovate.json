@@ -20,6 +20,13 @@
         "/com.fasterxml.jackson.*/"
       ],
       "enabled": false
+    },
+    {
+      "description": "Disable all updates for the legacy version catalog to maintain minSdk 21 compatibility",
+      "matchPaths": [
+        "gradle/libs-legacy.versions.toml"
+      ],
+      "enabled": false
     }
   ]
 }
