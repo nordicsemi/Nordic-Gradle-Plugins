@@ -34,13 +34,14 @@
 package no.nordicsemi.android.buildlogic
 
 import com.android.build.api.dsl.CommonExtension
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
-import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
+import org.jetbrains.compose.compose
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 /**
- * Configure Compose-specific options
+ * Configure Compose-specific options for Android (Application or Library)
  */
 internal fun Project.configureAndroidCompose(
     commonExtension: CommonExtension,
@@ -57,11 +58,51 @@ internal fun Project.configureAndroidCompose(
             // Add UI Tooling and Previews
             add("implementation", libs.findLibrary("androidx.compose.ui.tooling.preview").get())
             add("debugImplementation", libs.findLibrary("androidx.compose.ui.tooling").get())
+            // Add Material 3 Compose
+            add("implementation", libs.findLibrary("androidx.compose.material3").get())
+        }
+    }
+}
+
+/**
+ * Configure Compose Multiplatform for all targets (Android, iOS, etc.)
+ */
+internal fun Project.configureComposeMultiplatform(
+    extension: KotlinMultiplatformExtension,
+) {
+    pluginManager.apply("org.jetbrains.compose")
+
+    extension.sourceSets.getByName("commonMain").dependencies {
+        implementation(compose("org.jetbrains.compose.runtime:runtime"))
+        implementation(compose("org.jetbrains.compose.foundation:foundation"))
+        implementation(compose("org.jetbrains.compose.material3:material3"))
+        implementation(compose("org.jetbrains.compose.ui:ui"))
+        implementation(compose("org.jetbrains.compose.components:components-resources"))
+        implementation(compose("org.jetbrains.compose.ui:ui-tooling-preview"))
+    }
+}
+
+/**
+ * Configure Android-specific options for Compose in a KMP module
+ */
+internal fun Project.configureAndroidKmpCompose(
+    extension: KotlinMultiplatformAndroidLibraryExtension,
+) {
+    extension.apply {
+        androidResources {
+            enable = true
         }
     }
 
-    extensions.configure<ComposeCompilerGradlePluginExtension> {
-        // String skipping is enabled by default
-        // featureFlags.add(ComposeFeatureFlag.StrongSkipping)
+    dependencies {
+        val bom = libs.findLibrary("androidx-compose-bom").get()
+        // Adding the BOM to Android target source sets to align transitive androidx dependencies
+        add("androidMainImplementation", platform(bom))
+        add("androidDeviceTestImplementation", platform(bom))
+        add("androidHostTestImplementation", platform(bom))
+
+        // Add UI Tooling for Android
+        add("androidMainImplementation", libs.findLibrary("androidx.compose.ui.tooling.preview").get())
+        add("androidRuntimeClasspath", libs.findLibrary("androidx.compose.ui.tooling").get())
     }
 }

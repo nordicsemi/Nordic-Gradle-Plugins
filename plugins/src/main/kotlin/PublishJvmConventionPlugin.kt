@@ -29,7 +29,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import no.nordicsemi.android.NexusRepositoryPluginExt
+import no.nordicsemi.android.NordicPublishingExtension
 import no.nordicsemi.android.buildlogic.getVersionNameFromTags
 import no.nordicsemi.android.from
 import no.nordicsemi.android.tasks.ReleaseStagingRepositoriesTask
@@ -37,29 +37,27 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.extra
+import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
-import org.gradle.kotlin.dsl.withType
-import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.dokka.gradle.DokkaExtension
 import org.jetbrains.dokka.gradle.engine.plugins.DokkaHtmlPluginParameters
 import java.util.Calendar
 
-class KmpNexusRepositoryPlugin : Plugin<Project> {
-    private val isSigningEnabled: Boolean
-        get() = System.getenv("GPG_SIGNING_KEY") != null
+class PublishJvmConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
-                apply("org.jetbrains.kotlin.multiplatform")
+                apply("org.jetbrains.kotlin.jvm")
                 apply("maven-publish")
                 apply("signing")
                 apply("org.jetbrains.dokka")
@@ -68,7 +66,8 @@ class KmpNexusRepositoryPlugin : Plugin<Project> {
             // Default Nordic group.
             group = "no.nordicsemi.kotlin"
 
-            val nexusPluginExt = extensions.create("nordicNexusPublishing", NexusRepositoryPluginExt::class.java)
+            val nordicPublishing = extensions.create("nordicPublishing", NordicPublishingExtension::class.java)
+            val library = extensions.getByType<JavaPluginExtension>()
             val signing = extensions.getByType<SigningExtension>()
             val dokka = try {
                 extensions.getByType<DokkaExtension>()
@@ -80,10 +79,16 @@ class KmpNexusRepositoryPlugin : Plugin<Project> {
                 null
             }
 
-            // The signing configuration will be used by signing plugin.
+            // The signing configuration will be user by signing plugin.
             extra.set("signing.keyId", System.getenv("GPG_SIGNING_KEY"))
             extra.set("signing.password", System.getenv("GPG_PASSWORD"))
             extra.set("signing.secretKeyRingFile", "${project.rootDir.path}/sec.gpg")
+
+            // Create a software component with the release variant.
+            library.withSourcesJar()
+            // Javadoc fails with Java 17:
+            // https://github.com/Kotlin/dokka/issues/2956
+            // library.withJavadocJar()
 
             // Instead, configure Dokka to generate HTML docs for the module.
             dokka?.apply {
@@ -126,8 +131,9 @@ class KmpNexusRepositoryPlugin : Plugin<Project> {
                 logger.error("ERROR: Dokka V2 could not be applied, add \"org.jetbrains.dokka.experimental.gradle.pluginMode=V2Enabled\" to gradle.properties.")
             }
 
+            // TODO Remove afterEvaluate when `artifactId` and `groupId` are converted to lazy properties.
             afterEvaluate {
-                publishing {
+                extensions.configure<PublishingExtension> {
                     repositories {
                         maven {
                             name = "ossrh-staging-api"
@@ -138,41 +144,35 @@ class KmpNexusRepositoryPlugin : Plugin<Project> {
                             }
                         }
                     }
-                    // KMP creates publications automatically for each target.
-                    // Configure all of them with common settings.
-                    publications.withType<MavenPublication>().configureEach {
-                        with(nexusPluginExt) {
+                    publications {
+                        val publication = create("library", MavenPublication::class.java) {
+                            // Set publication properties.
                             version = getVersionNameFromTags()
-                            groupId = POM_GROUP ?: group.toString()
+                            with(nordicPublishing) {
+                                // TODO Use artifactId.set(pomArtifactId) when they are converted to Property
+                                artifactId = pomArtifactId.get()
+                                // TODO same here
+                                groupId = pomGroup.getOrElse(group.toString())
+                            }
+                            // Set the component to be published.
+                            from(components["java"])
+                            // Apply POM configuration.
+                            pom {
+                                from(nordicPublishing)
+                                packaging = "jar"
+                            }
+                            // Add Dokka HTML docs.
+                            artifact(tasks.named("dokkaHtmlJar"))
                         }
-                        // Apply POM configuration.
-                        pom {
-                            from(nexusPluginExt)
-                        }
-                        // Add Dokka HTML docs.
-                        artifact(tasks.named("dokkaHtmlJar"))
+                        // This task will add *.asc files to the publication for all artifacts.
+                        signing.sign(publication)
                     }
-                    // This task will add *.asc files to the publication for all artifacts.
-                    signing.isRequired = isSigningEnabled
-                    signing.sign(publications)
                 }
 
                 try {
                     rootProject.tasks.register("releaseStagingRepositories", ReleaseStagingRepositoriesTask::class.java)
-                } catch (_: Throwable) {
-                }
+                } catch (_: Throwable) { }
             }
         }
-
-        target.tasks.withType<AbstractPublishToMaven>().configureEach {
-            val signingTasks = target.tasks.withType<Sign>()
-            mustRunAfter(signingTasks)
-            dependsOn(signingTasks)
-        }
-    }
-
-    private fun Project.publishing(configuration: PublishingExtension.() -> Unit) {
-        val publishing = extensions.getByType<PublishingExtension>()
-        configuration(publishing)
     }
 }

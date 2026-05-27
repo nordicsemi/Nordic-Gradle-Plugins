@@ -29,21 +29,39 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.android.build.api.dsl.ApplicationExtension
-import com.android.build.api.dsl.LibraryExtension
+import com.android.build.api.dsl.CommonExtension
 import no.nordicsemi.android.buildlogic.configureKotlinAndroid
+import no.nordicsemi.android.buildlogic.configureKotlinJvm
+import no.nordicsemi.android.buildlogic.configureKotlinKmp
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.findByType
+import org.gradle.kotlin.dsl.configure
 
-class AndroidKotlinConventionPlugin : Plugin<Project> {
+/**
+ * Sets up Kotlin for the project.
+ *
+ * It automatically detects the project type (Android, KMP, or JVM) and applies
+ * the appropriate configuration using reactive plugin callbacks.
+ */
+class KotlinConventionPlugin : Plugin<Project> {
+
     override fun apply(target: Project) {
         with(target) {
-            extensions.findByType<LibraryExtension>()?.apply {
-                configureKotlinAndroid(this)
+            // Configure Android projects
+            pluginManager.withPlugin("com.android.base") {
+                extensions.configure<CommonExtension> {
+                    configureKotlinAndroid(this)
+                }
             }
-            extensions.findByType<ApplicationExtension>()?.apply {
-                configureKotlinAndroid(this)
+
+            // Configure Kotlin Multiplatform projects
+            pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
+                configureKotlinKmp()
+            }
+
+            // Configure pure JVM projects
+            pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
+                configureKotlinJvm()
             }
         }
     }

@@ -38,12 +38,14 @@ apply(from = "../gradle/git-tag-version.gradle.kts")
 
 val versionNameFromTags: String by extra
 
-group = "no.nordicsemi.android.gradle"
-version = versionNameFromTags
+val isLegacy = providers.gradleProperty("nordic.legacy").map { it.toBoolean() }.getOrElse(false)
+
+group = "no.nordicsemi.gradle"
+version = if (isLegacy) "$versionNameFromTags-legacy" else versionNameFromTags
 
 catalog {
     versionCatalog {
-        from(files("../gradle/libs.versions.toml"))
+        from(files(if (isLegacy) "../gradle/libs-legacy.versions.toml" else "../gradle/libs.versions.toml"))
     }
 }
 
@@ -59,7 +61,7 @@ publishing {
             pom {
                 name.set("Nordic version catalog for Android")
                 description.set("Nordic version catalog for Android")
-                url.set("https://github.com/NordicSemiconductor/Android-Gradle-Plugins")
+                url.set("https://github.com/nordicsemi/Nordic-Gradle-Plugins")
                 packaging = "toml"
 
                 // https://maven.apache.org/pom.html#licenses
@@ -73,9 +75,9 @@ publishing {
 
                 // https://maven.apache.org/pom.html#scm
                 scm {
-                    url.set("https://github.com/NordicSemiconductor/Android-Gradle-Plugins")
-                    connection.set("scm:git@github.com:NordicSemiconductor/Android-Gradle-Plugins.git")
-                    developerConnection.set("scm:git@github.com:NordicSemiconductor/Android-Gradle-Plugins.git")
+                    url.set("https://github.com/nordicsemi/Nordic-Gradle-Plugins")
+                    connection.set("scm:git@github.com:nordicsemi/Nordic-Gradle-Plugins.git")
+                    developerConnection.set("scm:git@github.com:nordicsemi/Nordic-Gradle-Plugins.git")
                 }
 
                 // https://maven.apache.org/pom.html#organization

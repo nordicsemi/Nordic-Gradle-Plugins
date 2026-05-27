@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Nordic Semiconductor
+ * Copyright (c) 2026, Nordic Semiconductor
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
@@ -29,25 +29,52 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import no.nordicsemi.android.buildlogic.libs
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
+import no.nordicsemi.android.AppConst
+import no.nordicsemi.android.buildlogic.minSdk
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
-class AndroidFeatureConventionPlugin : Plugin<Project> {
+/**
+ * Convention plugin for Android libraries in Kotlin Multiplatform projects.
+ *
+ * Note, if you need a KMP project without `androidMain`, use the `org.jetbrains.kotlin.multiplatform`
+ * plugin directly and configure the targets manually.
+ */
+class AndroidKmpLibraryConventionPlugin : Plugin<Project> {
+
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
-                apply(AndroidLibraryComposeConventionPlugin::class.java)
-                apply(AndroidHiltConventionPlugin::class.java)
+                apply("org.jetbrains.kotlin.multiplatform")
+                apply("com.android.kotlin.multiplatform.library")
             }
 
-            dependencies {
-                add("implementation", libs.findLibrary("androidx.hilt.navigation.compose").get())
-                // The above library depends on the following libraries, but to keep them in the
-                // newest version, we add them here as well.
-                add("implementation", libs.findLibrary("androidx.lifecycle.runtime.compose").get())
-                add("implementation", libs.findLibrary("androidx.lifecycle.viewModel.compose").get())
+            extensions.configure<KotlinMultiplatformExtension> {
+                targets.withType<KotlinMultiplatformAndroidLibraryTarget> {
+                    compileSdk {
+                        version = release(AppConst.COMPILE_SDK) {
+                            minorApiLevel = 1
+                        }
+                    }
+
+                    minSdk {
+                        version = release(target.minSdk)
+                    }
+
+                    @Suppress("UnstableApiUsage")
+                    optimization {
+                        minify = false
+                        consumerKeepRules.apply {
+                            publish = true
+                            file("module-rules.pro")
+                        }
+                    }
+                }
+
             }
         }
     }

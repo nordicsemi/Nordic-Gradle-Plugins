@@ -40,9 +40,10 @@ plugins {
 apply(from = "../gradle/git-tag-version.gradle.kts")
 
 val versionNameFromTags: String by extra
+val isLegacy = providers.gradleProperty("nordic.legacy").map { it.toBoolean() }.getOrElse(false)
 
-group = "no.nordicsemi.android.gradle"
-version = versionNameFromTags
+group = "no.nordicsemi.gradle"
+version = if (isLegacy) "$versionNameFromTags-legacy" else versionNameFromTags
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -50,113 +51,108 @@ java {
 }
 
 kotlin {
-    // Commented out to make compile on Android Studio Ladybug Patch 2
-    // https://github.com/skiptools/skip/issues/161#issuecomment-2203078945
     jvmToolchain(21)
 }
 
 dependencies {
-    compileOnly(libs.android.gradlePlugin)
-    compileOnly(libs.kotlin.gradlePlugin)
-    compileOnly(libs.compose.gradlePlugin)
-    compileOnly(libs.dokka.gradlePlugin)
+    // By using `implementation` instead of `compileOnly` we ensure that we won't have to apply
+    // them in final projects in the main build.gradle.kts files.
+    // I.e. it is enough to add "id("no.nordicsemi.plugin.android.application")"
+    // and no need to add "id("com.android.application")".
+    implementation(libs.android.gradlePlugin)
+    implementation(libs.android.gradleApi)
+    implementation(libs.kotlin.gradlePlugin)
+    implementation(libs.ksp.gradlePlugin)
+    implementation(libs.hilt.gradlePlugin)
+    implementation(libs.compose.gradlePlugin)
+    implementation(libs.jetbrains.compose.gradlePlugin)
+    implementation(libs.dokka.gradlePlugin)
+    implementation(libs.dokka.android.gradlePlugin)
 }
 
 gradlePlugin {
     website.set("https://www.nordicsemi.com/")
-    vcsUrl.set("https://github.com/NordicSemiconductor/Android-Gradle-Plugins")
+    vcsUrl.set("https://github.com/nordicsemi/Nordic-Gradle-Plugins")
 }
 
 gradlePlugin {
     plugins {
-        register("android.application.compose") {
-            id = "no.nordicsemi.android.plugin.application.compose"
-            displayName = "Application with Compose"
-            description = "Application plugin extension with Compose and Material3 dependencies. This plugin includes 'application' plugin."
-            implementationClass = "AndroidApplicationComposeConventionPlugin"
-            tags.addAll("nordicsemi", "Android", "application", "compose")
-        }
-        register("android.application") {
-            id = "no.nordicsemi.android.plugin.application"
-            displayName = "Standalone Application configuration"
-            description = "Application plugin extension."
+        register("android-application") {
+            id = "no.nordicsemi.plugin.android.application"
+            displayName = "Android Application Convention Plugin"
+            description = "Convention plugin for Android applications."
             implementationClass = "AndroidApplicationConventionPlugin"
-            tags.addAll("nordicsemi", "Android", "application")
+            tags.addAll("nordicsemi", "android", "application")
         }
-        register("android.library.compose") {
-            id = "no.nordicsemi.android.plugin.library.compose"
-            displayName = "Library with Compose"
-            description = "Library plugin extension with Compose and Material3 dependencies. This plugin extends 'library' plugin."
-            implementationClass = "AndroidLibraryComposeConventionPlugin"
-            tags.addAll("nordicsemi", "Android", "library", "compose")
-        }
-        register("android.library") {
-            id = "no.nordicsemi.android.plugin.library"
-            displayName = "Standalone library configuration"
-            description = "Library plugin extension."
+        register("android-library") {
+            id = "no.nordicsemi.plugin.android.library"
+            displayName = "Android Library Convention Plugin"
+            description = "Convention plugin for Android libraries."
             implementationClass = "AndroidLibraryConventionPlugin"
-            tags.addAll("nordicsemi", "Android", "library")
+            tags.addAll("nordicsemi", "android", "library")
         }
-        register("android.feature") {
-            id = "no.nordicsemi.android.plugin.feature"
-            displayName = "Feature plugin"
-            description = "UI feature plugin with Hilt & Compose. This plugin extends 'library.compose' and 'hilt' plugins and adds Compose navigation."
-            implementationClass = "AndroidFeatureConventionPlugin"
-            tags.addAll("nordicsemi", "Android", "feature")
+        register("android-kmp-library") {
+            id = "no.nordicsemi.plugin.android.kmp.library"
+            displayName = "Android Kotlin Multiplatform Library Convention Plugin"
+            description = "Convention plugin for Android Kotlin Multiplatform libraries."
+            implementationClass = "AndroidKmpLibraryConventionPlugin"
+            tags.addAll("nordicsemi", "android", "kotlin", "kmp", "multiplatform", "library")
         }
-        register("android.hilt") {
-            id = "no.nordicsemi.android.plugin.hilt"
-            displayName = "Hilt plugin"
-            description = "Plugin enabling Hilt"
-            implementationClass = "AndroidHiltConventionPlugin"
-            tags.addAll("nordicsemi", "Android", "hilt")
+        register("kotlin") {
+            id = "no.nordicsemi.plugin.kotlin"
+            displayName = "Kotlin Convention Plugin"
+            description = "Convention plugin configuring Kotlin for Android or KMP modules."
+            implementationClass = "KotlinConventionPlugin"
+            tags.addAll("nordicsemi", "kotlin")
         }
-        register("android.kotlin") {
-            id = "no.nordicsemi.android.plugin.kotlin"
-            displayName = "Kotlin plugin for Android modules"
-            description = "Plugin enabling Kotlin for Android modules."
-            implementationClass = "AndroidKotlinConventionPlugin"
-            tags.addAll("nordicsemi", "Android", "kotlin")
+        register("compose") {
+            id = "no.nordicsemi.plugin.feature.compose"
+            displayName = "Compose Feature Plugin"
+            description = "Convention plugin configuring Jetpack Compose or Compose Multiplatform."
+            implementationClass = "ComposeConventionPlugin"
+            tags.addAll("nordicsemi", "compose")
         }
-        register("jvm.kotlin") {
-            id = "no.nordicsemi.jvm.plugin.kotlin"
-            displayName = "Kotlin plugin for JVM projects"
-            description = "Plugin setting up Kotlin for JVM modules."
-            implementationClass = "JvmKotlinConventionPlugin"
-            tags.addAll("nordicsemi", "jvm", "kotlin")
+        register("hilt") {
+            id = "no.nordicsemi.plugin.feature.hilt"
+            displayName = "Hilt Feature Plugin"
+            description = "Convention plugin configuring Hilt for Android modules."
+            implementationClass = "HiltConventionPlugin"
+            tags.addAll("nordicsemi", "android", "hilt")
         }
-        register("kmp.kotlin") {
-            id = "no.nordicsemi.kmp.plugin.kotlin"
-            displayName = "Kotlin plugin for KMP projects"
-            description = "Plugin setting up Kotlin for KMP modules."
-            implementationClass = "KmpKotlinConventionPlugin"
-            tags.addAll("nordicsemi", "kmp", "kotlin", "multiplatform")
+        register("hilt-compose") {
+            id = "no.nordicsemi.plugin.feature.hilt.compose"
+            displayName = "Hilt Compose Feature Plugin"
+            description = "Convention plugin configuring Hilt integration for Compose."
+            implementationClass = "HiltComposeConventionPlugin"
+            tags.addAll("nordicsemi", "android", "hilt", "compose")
         }
-        register("android.nexus") {
-            id = "no.nordicsemi.android.plugin.nexus"
-            displayName = "Nexus plugin for Android projects"
-            description = "Plugin creating a task for publishing Android libraries to Nexus repository."
-            implementationClass = "AndroidNexusRepositoryPlugin"
-            tags.addAll("nordicsemi", "Android", "nexus", "publish")
+        register("publish-android") {
+            id = "no.nordicsemi.plugin.publish.android"
+            displayName = "Android Publishing Plugin"
+            description = "Convention plugin for publishing Android libraries to Maven Central repositories."
+            implementationClass = "PublishAndroidConventionPlugin"
+            tags.addAll("nordicsemi", "android", "publish")
         }
-        register("jvm.nexus") {
-            id = "no.nordicsemi.jvm.plugin.nexus"
-            displayName = "Nexus plugin for JVM projects"
-            description = "Plugin creating a task for publishing JVM libraries to Nexus repository."
-            implementationClass = "JvmNexusRepositoryPlugin"
-            tags.addAll("nordicsemi", "jvm", "kotlin", "nexus", "publish")
+
+        register("publish-jvm") {
+            id = "no.nordicsemi.plugin.publish.jvm"
+            displayName = "JVM Publishing Plugin"
+            description = "Convention plugin for publishing JVM libraries to Maven Central repositories."
+            implementationClass = "PublishJvmConventionPlugin"
+            tags.addAll("nordicsemi", "jvm", "publish")
         }
-        register("kmp.nexus") {
-            id = "no.nordicsemi.kmp.plugin.nexus"
-            displayName = "Nexus plugin for KMP projects"
-            description = "Plugin creating a task for publishing KMP libraries to Nexus repository."
-            implementationClass = "KmpNexusRepositoryPlugin"
-            tags.addAll("nordicsemi", "kmp", "kotlin", "multiplatform", "nexus", "publish")
+
+        register("publish-kmp") {
+            id = "no.nordicsemi.plugin.publish.kmp"
+            displayName = "KMP Publishing Plugin"
+            description = "Convention plugin for publishing Kotlin Multiplatform libraries to Maven Central repositories."
+            implementationClass = "PublishKmpConventionPlugin"
+            tags.addAll("nordicsemi", "kotlin", "kmp", "multiplatform", "publish")
         }
-        register("nordic.dokka") {
+        register("dokka") {
             id = "no.nordicsemi.plugin.dokka"
-            displayName = "Nordic Dokka plugin"
-            description = "Plugin configuring Dokka for Nordic projects."
+            displayName = "Dokka Convention Plugin"
+            description = "Convention plugin configuring Dokka for Nordic projects."
             implementationClass = "NordicDokkaPlugin"
             tags.addAll("nordicsemi", "dokka")
         }

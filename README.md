@@ -31,6 +31,10 @@ See [VERSION_CATALOG.md](./VERSION_CATALOG.md) for details.
 
 ---
 
+## Migration Guide
+
+When migration from version 2.x to 3.0, please follow the steps below: [Migration](MIGRATION_2_TO_3.md).
+
 ## Related Projects
 
 All Nordic libraries are released with a dedicated **Version Catalog** and **BOM (Bill of Materials)**

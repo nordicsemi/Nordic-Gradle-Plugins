@@ -1,9 +1,9 @@
 ## Version catalog
 
-![Maven Central Version](https://img.shields.io/maven-central/v/no.nordicsemi.android.gradle/version-catalog)
+![Maven Central Version](https://img.shields.io/maven-central/v/no.nordicsemi.gradle/version-catalog)
 
 The repository also contains Gradle Version Catalog with [toml](gradle/libs.versions.toml) file.
-The file is automatically used by gradle to create libs reference in _build.gradle.kts_ files.
+The file is automatically used by Gradle to create libs reference in _build.gradle.kts_ files.
 
 ### Set up
 
@@ -27,7 +27,7 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("libs") {
-            from("no.nordicsemi.android.gradle:version-catalog:<version>")
+            from("no.nordicsemi.gradle:version-catalog:<version>")
         }
     }
 }
@@ -36,7 +36,7 @@ dependencyResolutionManagement {
 Dependencies can be later set using `libs` reference in _build.gradle.kts_ files:
 ```kotlin
 plugins {
-    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.nordic.android.application) apply false
 }
 
 dependencies {

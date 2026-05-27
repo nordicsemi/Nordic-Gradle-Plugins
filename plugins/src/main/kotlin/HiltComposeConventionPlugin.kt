@@ -29,12 +29,22 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package no.nordicsemi
+import no.nordicsemi.android.buildlogic.configureHiltViewModel
+import org.gradle.api.Plugin
+import org.gradle.api.Project
 
-import org.gradle.api.JavaVersion
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+/**
+ * Adds Hilt ViewModel for Compose.
+ */
+class HiltComposeConventionPlugin : Plugin<Project> {
 
-
-internal fun JavaVersion.asJvmTarget(): JvmTarget {
-    return JvmTarget.fromTarget(majorVersion)
+    override fun apply(target: Project) {
+        with(target) {
+            pluginManager.apply(ComposeConventionPlugin::class.java)
+            pluginManager.apply(HiltConventionPlugin::class.java)
+            pluginManager.withPlugin("com.android.base") {
+                configureHiltViewModel()
+            }
+        }
+    }
 }

@@ -2,7 +2,7 @@ name: Deploy plugins to Gradle Portal
 on:
   workflow_dispatch:
 jobs:
-  deployToNexus:
+  deployPlugins:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6

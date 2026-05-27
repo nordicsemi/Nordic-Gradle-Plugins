@@ -33,11 +33,16 @@ import com.android.build.api.dsl.LibraryExtension
 import no.nordicsemi.android.AppConst
 import no.nordicsemi.android.buildlogic.getVersionCodeFromTags
 import no.nordicsemi.android.buildlogic.getVersionNameFromTags
+import no.nordicsemi.android.buildlogic.minSdk
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 
+/**
+ * Convention plugin for Android library modules.
+ */
 class AndroidLibraryConventionPlugin : Plugin<Project> {
+
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
@@ -52,7 +57,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 }
 
                 defaultConfig {
-                    minSdk = AppConst.MIN_SDK
+                    minSdk = target.minSdk
                 }
 
                 buildFeatures {
@@ -62,21 +67,17 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 buildTypes {
                     getByName("release") {
                         isMinifyEnabled = false
-                        // The proguard files will be used to generate AARs for publishing.
                         proguardFiles(
                             getDefaultProguardFile("proguard-android-optimize.txt"),
                             file("module-rules.pro")
                         )
-                        // The consumer proguard files will be added to dependent projects.
                         consumerProguardFile("module-rules.pro")
-                        // Add version name and code to the manifest.
                         buildConfigField("String", "VERSION_NAME", "\"${getVersionNameFromTags()}\"")
                         buildConfigField("String", "VERSION_CODE", "\"${getVersionCodeFromTags()}\"")
                     }
 
                     getByName("debug") {
                         isMinifyEnabled = false
-                        // Add version name and code to the manifest.
                         buildConfigField("String", "VERSION_NAME", "\"debug\"")
                         buildConfigField("String", "VERSION_CODE", "\"${getVersionCodeFromTags()}\"")
                     }

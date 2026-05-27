@@ -5,7 +5,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 object AppConst {
-    const val MIN_SDK = 23
     const val COMPILE_SDK = 36
     const val TARGET_SDK = 36
     val KOTLIN_VERSION = KotlinVersion.KOTLIN_2_3
