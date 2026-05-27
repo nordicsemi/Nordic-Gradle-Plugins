@@ -1,36 +1,61 @@
 # Releasing Nordic Gradle Plugins
 
-This repository supports releasing two versions of the plugins and version catalog from the same branch:
-1.  **Standard Version**: `minSdk = 23`, modern dependencies (default).
-2.  **Legacy Version**: `minSdk = 21`, older dependencies.
+This repository supports releasing multiple versions of the version catalog from the same branch.
 
-## Configuration
+## Version Catalogs
 
-The build logic switches between these versions based on the `nordic.legacy` Gradle property.
+The build system automatically detects and configures additional version catalog projects based on the presence of TOML files in the `gradle/` directory.
 
--   **Standard**: Uses `gradle/libs.versions.toml` and sets `minSdk = 23`.
--   **Legacy**: Uses `gradle/libs-legacy.versions.toml` and sets `minSdk = 21`.
+-   **Standard Catalog**: Uses `gradle/libs.versions.toml`. Published as `no.nordicsemi.gradle:version-catalog`.
+-   **SDK-Specific Catalogs**: Files named `gradle/libs.versions.<sdk>.toml` (e.g., `libs.versions.21.toml`) are automatically included as subprojects named `version-catalog-min-sdk-<sdk>`.
 
 ## How to Release
 
-The version name is derived from Git tags. When `nordic.legacy=true` is set, a `-legacy` suffix is automatically appended to the version name.
-
-### 1. Release Standard Version
-Run the standard publish command:
+### 1. Release All Catalogs
+Run the publish command. All detected catalogs will be published as separate artifacts to Maven Central.
 ```bash
-./gradlew publish
+./gradlew :version-catalog:publishToSonatype
 ```
-This will release version e.g. `3.0.0` based on the latest tag.
-
-### 2. Release Legacy Version
-Run the publish command with the legacy property:
+Wait! The command above only publishes the standard one. To publish all, you can run:
 ```bash
-./gradlew publish -Pnordic.legacy=true
+./gradlew publishToSonatype
 ```
-This will release version e.g. `3.0.0-legacy` (using the same tag but with a suffix and legacy configuration).
+Or specifically:
+```bash
+./gradlew :version-catalog:publishToSonatype :version-catalog-min-sdk-21:publishToSonatype
+```
 
-## Maintaining Dependencies
--   Update standard dependencies in `gradle/libs.versions.toml`.
--   Update legacy dependencies in `gradle/libs-legacy.versions.toml`.
+### 2. Release Plugins
+The plugins rely on a Gradle property to choose which `minSdk` to target in the generated build standards.
 
-The `AppConst` object is automatically generated during the build process based on the selected flavor.
+**Release Standard Plugins:**
+```bash
+./gradlew :plugins:publishPlugins
+```
+
+**Release Legacy Plugins (targeting minSdk 21):**
+```bash
+./gradlew :plugins:publishPlugins -Pnordic.legacy=true
+```
+
+## How to Consume Version Catalogs
+
+### Using Standard
+```kotlin
+versionCatalogs {
+    create("libs") {
+        from("no.nordicsemi.gradle:version-catalog:<version>")
+    }
+}
+```
+
+### Using a Specific SDK Version (e.g., 21)
+```kotlin
+versionCatalogs {
+    create("libs") {
+        from("no.nordicsemi.gradle:version-catalog-min-sdk-21:<version>")
+    }
+}
+```
+
+In both cases, your project will have a catalog named `libs`, and the Nordic plugins will automatically read the correct `minSdk` and dependency versions from it.

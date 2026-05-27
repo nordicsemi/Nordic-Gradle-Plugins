@@ -24,7 +24,7 @@
     {
       "description": "Disable all updates for the legacy version catalog to maintain minSdk 21 compatibility",
       "matchPaths": [
-        "gradle/libs-legacy.versions.toml"
+        "gradle/libs.versions.21.toml"
       ],
       "enabled": false
     }

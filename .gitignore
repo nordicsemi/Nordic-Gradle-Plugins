@@ -28,7 +28,7 @@ out/
 # Gradle files
 .gradle
 .gradle/
-build/
+build*/
 
 # Kotlin
 .kotlin

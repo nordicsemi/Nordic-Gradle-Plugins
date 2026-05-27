@@ -24,18 +24,12 @@ platform :android do
 
   desc "Deploy version catalog to Maven Central."
   lane :deployVersionCatalog do
-    gradle(
-      task: ":version-catalog:publishToSonatype closeAndReleaseSonatypeStagingRepository",
-      properties: { "nordic.legacy" => "false" }
-    )
+    gradle(task: ":version-catalog:publishToSonatype closeAndReleaseSonatypeStagingRepository")
   end
 
   desc "Deploy legacy version catalog to Maven Central."
   lane :deployLegacyVersionCatalog do
-    gradle(
-      task: ":version-catalog:publishToSonatype closeAndReleaseSonatypeStagingRepository",
-      properties: { "nordic.legacy" => "true" }
-    )
+    gradle(task: ":version-catalog-min-sdk-21:publishToSonatype closeAndReleaseSonatypeStagingRepository")
   end
 
 end

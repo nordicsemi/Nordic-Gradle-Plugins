@@ -38,14 +38,25 @@ apply(from = "../gradle/git-tag-version.gradle.kts")
 
 val versionNameFromTags: String by extra
 
-val isLegacy = providers.gradleProperty("nordic.legacy").map { it.toBoolean() }.getOrElse(false)
-
 group = "no.nordicsemi.gradle"
-version = if (isLegacy) "$versionNameFromTags-legacy" else versionNameFromTags
+version = versionNameFromTags
+
+// Parse the SDK version from the project name if it follows the naming convention.
+// Default (version-catalog) uses libs.versions.toml.
+// Others (version-catalog-min-sdk-N) use libs.versions.N.toml.
+val sdkMatch = Regex("version-catalog-min-sdk-(\\d+)").find(project.name)
+val sdkVersion = sdkMatch?.groupValues?.get(1)
+val catalogFileName = if (sdkVersion != null) "libs.versions.$sdkVersion.toml" else "libs.versions.toml"
+
+// Use a separate build directory for each catalog to avoid task output conflicts
+// since multiple projects might share the same project directory.
+if (sdkVersion != null) {
+    layout.buildDirectory.set(file("build-min-sdk-$sdkVersion"))
+}
 
 catalog {
     versionCatalog {
-        from(files(if (isLegacy) "../gradle/libs-legacy.versions.toml" else "../gradle/libs.versions.toml"))
+        from(files("../gradle/$catalogFileName"))
     }
 }
 
@@ -53,50 +64,52 @@ publishing {
     publications {
         create<MavenPublication>("libs") {
             from(components["versionCatalog"])
-
-            groupId = group.toString()
-            version = project.version.toString()
-            artifactId = "version-catalog"
-
+            
+            artifactId = project.name
+            
             pom {
-                name.set("Nordic version catalog for Android")
-                description.set("Nordic version catalog for Android")
-                url.set("https://github.com/nordicsemi/Nordic-Gradle-Plugins")
-                packaging = "toml"
-
-                // https://maven.apache.org/pom.html#licenses
-                licenses {
-                    license {
-                        name.set("BSD-3-Clause")
-                        url.set("http://opensource.org/licenses/BSD-3-Clause")
-                        distribution.set("repo")
-                    }
+                val description = if (sdkVersion != null) {
+                    "Nordic version catalog (minSdk $sdkVersion)"
+                } else {
+                    // For the main catalog, we might want to be more specific if we know its minSdk.
+                    // However, keeping it generic for the default one is also fine.
+                    "Nordic version catalog"
                 }
-
-                // https://maven.apache.org/pom.html#scm
-                scm {
-                    url.set("https://github.com/nordicsemi/Nordic-Gradle-Plugins")
-                    connection.set("scm:git@github.com:nordicsemi/Nordic-Gradle-Plugins.git")
-                    developerConnection.set("scm:git@github.com:nordicsemi/Nordic-Gradle-Plugins.git")
-                }
-
-                // https://maven.apache.org/pom.html#organization
-                organization {
-                    name.set("Nordic Semiconductor ASA")
-                    url.set("https://www.nordicsemi.com")
-                }
-
-                // https://maven.apache.org/pom.html#developers
-                developers {
-                    developer {
-                        id.set("mag")
-                        name.set("Mobile Applications Group")
-                        email.set("mag@nordicsemi.no")
-                        organization.set("Nordic Semiconductor ASA")
-                        organizationUrl.set("https://www.nordicsemi.com")
-                    }
-                }
+                configureNordicPom(description)
             }
+        }
+    }
+}
+
+fun MavenPom.configureNordicPom(descriptionText: String) {
+    name.set(descriptionText)
+    description.set(descriptionText)
+    url.set("https://github.com/nordicsemi/Nordic-Gradle-Plugins")
+    packaging = "toml"
+
+    licenses {
+        license {
+            name.set("BSD-3-Clause")
+            url.set("http://opensource.org/licenses/BSD-3-Clause")
+            distribution.set("repo")
+        }
+    }
+    scm {
+        url.set("https://github.com/nordicsemi/Nordic-Gradle-Plugins")
+        connection.set("scm:git@github.com:nordicsemi/Nordic-Gradle-Plugins.git")
+        developerConnection.set("scm:git@github.com:nordicsemi/Nordic-Gradle-Plugins.git")
+    }
+    organization {
+        name.set("Nordic Semiconductor ASA")
+        url.set("https://www.nordicsemi.com")
+    }
+    developers {
+        developer {
+            id.set("mag")
+            name.set("Mobile Applications Group")
+            email.set("mag@nordicsemi.no")
+            organization.set("Nordic Semiconductor ASA")
+            organizationUrl.set("https://www.nordicsemi.com")
         }
     }
 }

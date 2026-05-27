@@ -37,11 +37,7 @@ import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.getByType
 
 val Project.libs: VersionCatalog
-    get() {
-        val isLegacy = providers.gradleProperty("nordic.legacy").map { it.toBoolean() }.getOrElse(false)
-        val catalogName = if (isLegacy) "libsLegacy" else "libs"
-        return extensions.getByType<VersionCatalogsExtension>().named(catalogName)
-    }
+    get() = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 val Project.minSdk
     get(): Int = libs.findVersion("minSdk").get().requiredVersion.toInt()
