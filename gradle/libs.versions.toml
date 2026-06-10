@@ -1,7 +1,7 @@
 [versions]
 minSdk = "23"
 androidGradlePlugin = "9.2.1"
-kotlin = "2.3.21" # When changes, update also kotlinAndroid.kt
+kotlin = "2.4.0" # When changes, update also kotlinAndroid.kt
 ksp = "2.3.9"
 androidxActivity = "1.13.0"
 androidxAnnotation = "1.10.0"
