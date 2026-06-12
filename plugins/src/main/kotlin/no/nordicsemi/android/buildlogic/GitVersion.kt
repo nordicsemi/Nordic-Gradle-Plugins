@@ -80,3 +80,16 @@ fun Project.getVersionNameFromTags(): String {
     // Version may have % to add additional information
     return latestTag.split("%")[0]
 }
+
+/**
+ * This method returns the current git revision.
+ */
+fun Project.getGitRevision(): String {
+    return try {
+        providers.exec { commandLine("git", "rev-parse", "HEAD") }
+            .standardOutput.asText.get().trim()
+    } catch (e: Exception) {
+        e.printStackTrace()
+        "main"
+    }
+}

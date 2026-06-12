@@ -67,6 +67,7 @@ dependencies {
     implementation(libs.jetbrains.compose.gradlePlugin)
     implementation(libs.dokka.gradlePlugin)
     implementation(libs.dokka.android.gradlePlugin)
+    implementation(libs.spdx.gradlePlugin)
 }
 
 gradlePlugin {
