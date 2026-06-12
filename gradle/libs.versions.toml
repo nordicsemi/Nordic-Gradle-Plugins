@@ -76,7 +76,6 @@ skydovesBallon = "1.7.6"
 moshi = "1.15.2"
 koinCore = "4.2.1"
 koinCompose = "4.2.1"
-kmmUuid = "0.8.4"
 kmmVoyager = "2.2.21-1.10.3"
 kmmLogs = "2.7.1" # Napier
 gson = "2.14.0"
