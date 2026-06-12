@@ -87,6 +87,7 @@ dokkaPlugin = "2.2.0"
 googleServicesPlugins = "4.4.2"
 firebaseCrashlyticsPlugins = "3.0.2"
 kmmIosPublishPlugin = "2.0.3"
+spdxPlugin = "0.11.0" # https://github.com/spdx/spdx-gradle-plugin
 
 [libraries]
 accompanist-placeholder = { group = "com.google.accompanist", name = "accompanist-placeholder-material", version.ref = "accompanistPlaceholder" }
@@ -247,6 +248,7 @@ hilt-gradlePlugin = { group = "com.google.dagger", name = "hilt-android-gradle-p
 dokka-gradlePlugin = { group = "org.jetbrains.dokka", name = "dokka-gradle-plugin", version.ref = "dokkaPlugin" }
 dokka-android-gradlePlugin = { group = "org.jetbrains.dokka", name = "android-documentation-plugin", version.ref = "dokkaPlugin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+spdx-gradlePlugin = { group = "org.spdx", name = "spdx-gradle-plugin", version.ref = "spdxPlugin" }
 
 [plugins]
 # Base plugins
@@ -287,3 +289,4 @@ wire = { id = "com.squareup.wire", version.ref = "wirePlugin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServicesPlugins" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugins" }
 kmm-ios-publish = { id = "com.chromaticnoise.multiplatform-swiftpackage", version.ref = "kmmIosPublishPlugin" }
+spdx = { id = "org.spdx.sbom", version.ref = "spdxPlugin" }

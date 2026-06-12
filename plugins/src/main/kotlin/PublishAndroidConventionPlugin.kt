@@ -31,7 +31,9 @@
 
 import com.android.build.api.dsl.LibraryExtension
 import no.nordicsemi.android.NordicPublishingExtension
+import no.nordicsemi.android.buildlogic.getGitRevision
 import no.nordicsemi.android.buildlogic.getVersionNameFromTags
+import no.nordicsemi.android.fixSpdx
 import no.nordicsemi.android.from
 import no.nordicsemi.android.tasks.ReleaseStagingRepositoriesTask
 import org.gradle.api.Plugin
@@ -50,6 +52,7 @@ import org.gradle.kotlin.dsl.register
 import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.dokka.gradle.DokkaExtension
 import org.jetbrains.dokka.gradle.engine.plugins.DokkaHtmlPluginParameters
+import org.spdx.sbom.gradle.SpdxSbomExtension
 import java.util.Calendar
 
 class PublishAndroidConventionPlugin : Plugin<Project> {
@@ -61,10 +64,15 @@ class PublishAndroidConventionPlugin : Plugin<Project> {
                 apply("maven-publish")
                 apply("signing")
                 apply("org.jetbrains.dokka")
+                apply("org.spdx.sbom")
             }
+
+            val gitVersion = getVersionNameFromTags()
+            val gitRevision = getGitRevision()
 
             // Default Nordic group.
             group = "no.nordicsemi.android"
+            version = gitVersion
 
             val nordicPublishing = extensions.create("nordicPublishing", NordicPublishingExtension::class.java)
             val library = extensions.getByType<LibraryExtension>()
@@ -106,7 +114,7 @@ class PublishAndroidConventionPlugin : Plugin<Project> {
                     }
                 }
                 // Set the version.
-                moduleVersion.set(getVersionNameFromTags())
+                moduleVersion.set(gitVersion)
                 // Set the footer message.
                 pluginsConfiguration.named("html", DokkaHtmlPluginParameters::class.java) {
                     val year = Calendar.getInstance().get(Calendar.YEAR)
@@ -137,6 +145,28 @@ class PublishAndroidConventionPlugin : Plugin<Project> {
 
             // TODO Remove afterEvaluate when `artifactId` and `groupId` are converted to lazy properties.
             afterEvaluate {
+                // Configure SPDX SBOM generation.
+                extensions.configure<SpdxSbomExtension> {
+                    targets.register("release") {
+                        configurations.set(listOf("releaseRuntimeClasspath"))
+                        with (nordicPublishing) {
+                            scm {
+                                uri.set(pomScmUrl)
+                                revision.set(gitRevision)
+                            }
+                            document {
+                                name.set("$group:${pomArtifactId.get()}")
+                                namespace.set(pomUrl.map { "$it${pomArtifactId.get()}/$version/spdx" })
+                                creator.set(pomOrg.map { "Organization: $it" })
+                                packageSupplier.set(pomOrg.map { "Organization: $it" })
+                            }
+                        }
+                    }
+                }
+                val spdxTask = tasks.named("spdxSbomForRelease") {
+                    fixSpdx(project.group.toString(), nordicPublishing)
+                }
+
                 extensions.configure<PublishingExtension> {
                     repositories {
                         maven {
@@ -151,11 +181,13 @@ class PublishAndroidConventionPlugin : Plugin<Project> {
                     publications {
                         val publication = create("library", MavenPublication::class.java) {
                             // Set publication properties.
-                            version = getVersionNameFromTags()
                             with(nordicPublishing) {
                                 // TODO Use artifactId.set(pomArtifactId) when they are converted to Property
                                 artifactId = pomArtifactId.get()
+                                // TODO Same here
                                 groupId = pomGroup.getOrElse(group.toString())
+                                // TODO And here
+                                version = gitVersion
                             }
                             // Set the component to be published.
                             from(components["release"])
@@ -166,6 +198,12 @@ class PublishAndroidConventionPlugin : Plugin<Project> {
                             }
                             // Add Dokka HTML docs.
                             artifact(tasks.named("dokkaHtmlJar"))
+
+                            // Add SPDX SBOM.
+                            artifact(spdxTask) {
+                                classifier = "sbom"
+                                extension = "json"
+                            }
                         }
                         // This task will add *.asc files to the publication for all artifacts.
                         signing.sign(publication)

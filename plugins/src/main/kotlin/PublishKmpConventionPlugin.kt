@@ -30,7 +30,9 @@
  */
 
 import no.nordicsemi.android.NordicPublishingExtension
+import no.nordicsemi.android.buildlogic.getGitRevision
 import no.nordicsemi.android.buildlogic.getVersionNameFromTags
+import no.nordicsemi.android.fixSpdx
 import no.nordicsemi.android.from
 import no.nordicsemi.android.tasks.ReleaseStagingRepositoriesTask
 import org.gradle.api.Plugin
@@ -51,6 +53,7 @@ import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.dokka.gradle.DokkaExtension
 import org.jetbrains.dokka.gradle.engine.plugins.DokkaHtmlPluginParameters
+import org.spdx.sbom.gradle.SpdxSbomExtension
 import java.util.Calendar
 
 class PublishKmpConventionPlugin : Plugin<Project> {
@@ -67,10 +70,15 @@ class PublishKmpConventionPlugin : Plugin<Project> {
                 apply("maven-publish")
                 apply("signing")
                 apply("org.jetbrains.dokka")
+                apply("org.spdx.sbom")
             }
+
+            val gitVersion = getVersionNameFromTags()
+            val gitRevision = getGitRevision()
 
             // Default Nordic group.
             group = "no.nordicsemi.kotlin"
+            version = gitVersion
 
             val nordicPublishing = extensions.create("nordicPublishing", NordicPublishingExtension::class.java)
             val signing = extensions.getByType<SigningExtension>()
@@ -101,7 +109,7 @@ class PublishKmpConventionPlugin : Plugin<Project> {
                     }
                 }
                 // Set the version.
-                moduleVersion.set(getVersionNameFromTags())
+                moduleVersion.set(gitVersion)
                 // Set the footer message.
                 pluginsConfiguration.named("html", DokkaHtmlPluginParameters::class.java) {
                     val year = Calendar.getInstance().get(Calendar.YEAR)
@@ -131,6 +139,30 @@ class PublishKmpConventionPlugin : Plugin<Project> {
             }
 
             afterEvaluate {
+                // Configure SPDX SBOM generation.
+                extensions.configure<SpdxSbomExtension> {
+                    targets.register("release") {
+                        // By default, the 'configurations' have only 1 item: "runtimeClasspath".
+                        configurations.set(listOf("jvmRuntimeClasspath"))
+                        with (nordicPublishing) {
+                            scm {
+                                uri.set(pomScmUrl)
+                                revision.set(gitRevision)
+                            }
+                            document {
+                                // TODO Use name.set(pomArtifactId) when it is converted to Property
+                                name.set("$group:${pomArtifactId.get()}")
+                                namespace.set(pomUrl.map { "$it${pomArtifactId.get()}/$version/spdx" })
+                                creator.set(pomOrg.map { "Organization: $it" })
+                                packageSupplier.set(pomOrg.map { "Organization: $it" })
+                            }
+                        }
+                    }
+                }
+                val spdxTask = tasks.named("spdxSbomForRelease") {
+                    fixSpdx(project.group.toString(), nordicPublishing)
+                }
+
                 extensions.configure<PublishingExtension> {
                     repositories {
                         maven {
@@ -146,12 +178,13 @@ class PublishKmpConventionPlugin : Plugin<Project> {
                     // Configure all of them with common settings.
                     publications.withType<MavenPublication>().configureEach {
                         // Set publication properties.
-                        version = getVersionNameFromTags()
                         with(nordicPublishing) {
                             // Note: artifactId should NOT be set for KMP modules.
                             //       Those are set automatically based on the platform.
                             // TODO Use groupId.set(pomGroup) when it is converted to Property
                             groupId = pomGroup.getOrElse(group.toString())
+                            // TODO Same here
+                            version = gitVersion
                         }
                         // Apply POM configuration.
                         pom {
@@ -159,6 +192,18 @@ class PublishKmpConventionPlugin : Plugin<Project> {
                         }
                         // Add Dokka HTML docs.
                         artifact(tasks.named("dokkaHtmlJar"))
+
+                        // Only attach SBOM to the root KMP publication, not every platform artifact.
+                        // Note:
+                        //   If iOS module has some extra dependencies they won't be included here
+                        //   in the SBOM. If we reach this situation, we should perhaps add
+                        //   SBOM for iOS artifacts as well.
+                        if (name == "kotlinMultiplatform") {
+                            artifact(spdxTask) {
+                                classifier = "sbom"
+                                extension = "json"
+                            }
+                        }
                     }
                     // This task will add *.asc files to the publication for all artifacts.
                     signing.isRequired = isSigningEnabled

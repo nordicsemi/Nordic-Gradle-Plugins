@@ -31,6 +31,7 @@
 
 package no.nordicsemi.android
 
+import org.gradle.api.Task
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.publish.maven.MavenPom
@@ -168,5 +169,55 @@ internal fun MavenPom.from(
             organization.set(pomOrg.get())
             organizationUrl.set(pomOrgUrl.get())
         }
+    }
+}
+
+/**
+ * This method modifies the outcome of "spdxSbomForRelease" task and sets correct
+ * license and copyright information.
+ *
+ * Perhaps this will be removed in the future.
+ *
+ * See: [spdx-gradle-plugin](https://github.com/spdx/spdx-gradle-plugin).
+ */
+internal fun Task.fixSpdx(
+    group: String,
+    extension: NordicPublishingExtension,
+) {
+    doLast {
+        val sbomFile = outputs.files.singleFile
+        val json = groovy.json.JsonSlurper().parse(sbomFile) as MutableMap<*, *>
+
+        @Suppress("UNCHECKED_CAST")
+        val packages = json["packages"] as List<Map<String, Any>>
+
+        val nordicOrg = extension.pomOrg.get()
+        val license = extension.pomLicence.get()
+
+        val patched = packages.map { pkg ->
+            if (pkg["supplier"] == "Organization: $nordicOrg") {
+                pkg.toMutableMap().apply {
+                    // For libraries that are being released the license is not set.
+                    if (get("licenseDeclared") == "NOASSERTION") {
+                        put("licenseDeclared", license)
+                        put("licenseConcluded", license)
+                    }
+                    if (get("copyrightText") == "NOASSERTION") {
+                        put("copyrightText", "Copyright (c) ${java.time.Year.now()} $nordicOrg")
+                    }
+                    // The local packages are published with just the module name.
+                    // Instead, we want them to contain the group id.
+                    val moduleName = get("name").toString()
+                    if (!moduleName.contains(":")) {
+                        put("name", "$group:$moduleName")
+                    }
+                }
+            } else pkg
+        }
+
+        val output = groovy.json.JsonOutput.toJson(json.toMutableMap().apply {
+            put("packages", patched)
+        })
+        sbomFile.writeText(groovy.json.JsonOutput.prettyPrint(output))
     }
 }
