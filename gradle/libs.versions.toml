@@ -54,7 +54,7 @@ material = "1.14.0"
 memfault-cloud = "2.1.0"
 okhttp = "5.4.0"
 okio = "3.17.0"
-protobuf = "4.35.0"
+protobuf = "4.35.1"
 protobufPlugin = "0.10.0"
 publishPlugin = "2.1.1"
 retrofit = "3.0.0"
@@ -78,7 +78,7 @@ koinCore = "4.2.1"
 koinCompose = "4.2.1"
 kmmUuid = "0.8.4"
 kmmVoyager = "2.2.21-1.10.3"
-kmmLogs = "2.7.1"
+kmmLogs = "2.7.1" # Napier
 gson = "2.14.0"
 fasterxml = "2.13.5" # don't update
 
@@ -235,7 +235,6 @@ moshi-adapters = { group = "com.squareup.moshi", name = "moshi-adapters", versio
 moshi-kotlin-codegen = { group = "com.squareup.moshi", name = "moshi-kotlin-codegen", version.ref = "moshi" }
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koinCore" }
 koin-compose = { group = "io.insert-koin", name = "koin-compose", version.ref = "koinCompose" }
-kmm-uuid = { group = "com.benasher44", name = "uuid", version.ref = "kmmUuid" }
 kmm-voyager = { group = "cafe.adriel.voyager", name = "voyager-navigator", version.ref = "kmmVoyager" }
 kmm-logs = { group = "io.github.aakira", name = "napier", version.ref = "kmmLogs" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }

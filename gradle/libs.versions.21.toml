@@ -1,7 +1,7 @@
 [versions]
 minSdk = "21"
 androidGradlePlugin = "9.2.1"
-kotlin = "2.3.21" # When changes, update also kotlinAndroid.kt
+kotlin = "2.4.0" # When changes, update also kotlinAndroid.kt
 ksp = "2.3.9"
 androidxActivity = "1.11.0" # Don't update
 androidxAnnotation = "1.10.0"
@@ -47,14 +47,14 @@ junit4 = "4.13.2"
 kotlinxCoroutines = "1.11.0"
 kotlinxDatetime = "0.8.0-0.6.x-compat"
 kotlinxSerializationJson = "1.11.0"
-kotlinCompose = "1.11.0"
+kotlinCompose = "1.11.1"
 javaAnnotations = "26.1.0" # https://github.com/JetBrains/java-annotations
 lint = "32.2.1"
 material = "1.13.0" # Don't update. Version 1.14.0 increases minSdk to 23.
 memfault-cloud = "2.1.0"
-okhttp = "5.3.2"
+okhttp = "5.4.0"
 okio = "3.17.0"
-protobuf = "4.35.0"
+protobuf = "4.35.1"
 protobufPlugin = "0.10.0"
 publishPlugin = "2.1.1"
 retrofit = "3.0.0"
@@ -67,7 +67,7 @@ wirePlugin = "6.4.0"
 timber = "5.0.1"
 chart = "v3.1.0"
 leakcanary = "2.14"
-mockk = "1.14.9"
+mockk = "1.14.11"
 truth = "1.4.5"
 slf4j = "2.0.18"
 slf4j-timber = "1.2"
@@ -76,9 +76,8 @@ skydovesBallon = "1.7.6"
 moshi = "1.15.2"
 koinCore = "4.2.1"
 koinCompose = "4.2.1"
-kmmUuid = "0.8.4"
 kmmVoyager = "1.0.1"
-kmmLogs = "2.7.1"
+kmmLogs = "2.7.1" # Napier
 gson = "2.14.0"
 fasterxml = "2.13.5" # don't update
 
@@ -234,7 +233,6 @@ moshi-adapters = { group = "com.squareup.moshi", name = "moshi-adapters", versio
 moshi-kotlin-codegen = { group = "com.squareup.moshi", name = "moshi-kotlin-codegen", version.ref = "moshi" }
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koinCore" }
 koin-compose = { group = "io.insert-koin", name = "koin-compose", version.ref = "koinCompose" }
-kmm-uuid = { group = "com.benasher44", name = "uuid", version.ref = "kmmUuid" }
 kmm-voyager = { group = "cafe.adriel.voyager", name = "voyager-navigator", version.ref = "kmmVoyager" }
 kmm-logs = { group = "io.github.aakira", name = "napier", version.ref = "kmmLogs" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
