@@ -52,7 +52,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             extensions.configure<LibraryExtension> {
                 compileSdk {
                     version = release(AppConst.COMPILE_SDK) {
-                        minorApiLevel = 1
+                        // minorApiLevel = 1
                     }
                 }
 

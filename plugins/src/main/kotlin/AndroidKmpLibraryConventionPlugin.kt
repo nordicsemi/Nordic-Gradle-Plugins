@@ -57,7 +57,7 @@ class AndroidKmpLibraryConventionPlugin : Plugin<Project> {
                 targets.withType<KotlinMultiplatformAndroidLibraryTarget> {
                     compileSdk {
                         version = release(AppConst.COMPILE_SDK) {
-                            minorApiLevel = 1
+                            // minorApiLevel = 1
                         }
                     }
 
