@@ -82,7 +82,7 @@ gson = "2.14.0"
 fasterxml = "2.13.5" # don't update
 
 # Plugin versions
-nordicPlugins = "3.1.1"
+nordicPlugins = "3.1.2"
 dokkaPlugin = "2.2.0"
 googleServicesPlugins = "4.4.2"
 firebaseCrashlyticsPlugins = "3.0.2"
