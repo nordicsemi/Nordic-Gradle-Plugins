@@ -80,6 +80,21 @@ kmmVoyager = "2.2.21-1.10.3"
 kmmLogs = "2.7.1" # Napier
 gson = "2.14.0"
 fasterxml = "2.13.5" # don't update
+composeMultiplatform = "2.9.6"
+material3Version = "1.9.0"
+foundation = "1.10.2"
+materialIconsExtended = "1.7.3"
+composeUi = "1.10.2"
+componentsResources = "1.11.1"
+multiplatformNavigation = "1.0.0-alpha06"
+multiplatformAdaptiveNavigation = "1.3.0-alpha06"
+cloudy = "0.5.0"
+compottie="2.2.1"
+cmptoast = "1.0.71"
+composeMultiplatformLifecycle = "2.10.0-beta01"
+kotlinxCollectionsImmutable = "0.5.0"
+playServicesHome = "17.1.0"
+uiToolingPreviewVersion = "1.10.2"
 
 # Plugin versions
 nordicPlugins = "3.1.2"
@@ -229,15 +244,24 @@ slf4j-timber = { group = "uk.kulikov", name = "slf4j2-timber", version.ref = "sl
 test-mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 test-robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 skydoves-ballon = { group = "com.github.skydoves", name = "balloon-compose", version.ref = "skydovesBallon" }
+skydoves-cloudy = { group = "com.github.skydoves", name = "cloudy", version.ref = "cloudy" }
 moshi = { group = "com.squareup.moshi", name = "moshi", version.ref = "moshi" }
 moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshi" }
 moshi-adapters = { group = "com.squareup.moshi", name = "moshi-adapters", version.ref = "moshi" }
 moshi-kotlin-codegen = { group = "com.squareup.moshi", name = "moshi-kotlin-codegen", version.ref = "moshi" }
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koinCore" }
 koin-compose = { group = "io.insert-koin", name = "koin-compose", version.ref = "koinCompose" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinCore" }
+koin-android-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinCore" }
 kmm-voyager = { group = "cafe.adriel.voyager", name = "voyager-navigator", version.ref = "kmmVoyager" }
 kmm-logs = { group = "io.github.aakira", name = "napier", version.ref = "kmmLogs" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+cmptoast = { module = "network.chaintech:cmptoast", version.ref = "cmptoast" }
+compottie = { module = "io.github.alexzhirkevich:compottie", version.ref = "compottie" }
+compottie-lite = { module = "io.github.alexzhirkevich:compottie-lite", version.ref = "compottie" }
+compottie-dot = { module = "io.github.alexzhirkevich:compottie-dot", version.ref = "compottie" }
+compottie-network = { module = "io.github.alexzhirkevich:compottie-network", version.ref = "compottie" }
+compottie-resources = { module = "io.github.alexzhirkevich:compottie-resources", version.ref = "compottie" }
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
@@ -250,6 +274,20 @@ dokka-gradlePlugin = { group = "org.jetbrains.dokka", name = "dokka-gradle-plugi
 dokka-android-gradlePlugin = { group = "org.jetbrains.dokka", name = "android-documentation-plugin", version.ref = "dokkaPlugin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 spdx-gradlePlugin = { group = "org.spdx", name = "spdx-gradle-plugin", version.ref = "spdxPlugin" }
+jetbrains-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "foundation" }
+jetbrains-compose-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "composeMultiplatform" }
+jetbrains-compose-runtime = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "composeMultiplatform" }
+jetbrains-compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3Version" }
+jetbrains-adaptive-navigation = { module = "org.jetbrains.compose.material3.adaptive:adaptive-navigation3", version.ref = "multiplatformAdaptiveNavigation" }
+jetbrains-lifecycle-navigation = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "composeMultiplatformLifecycle" }
+jetbrains-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
+jetbrains-compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeUi" }
+jetbrains-compose-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "componentsResources" }
+jetbrains-navigation = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "multiplatformNavigation" }
+jetbrains-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
+jetbrains-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "uiToolingPreviewVersion" }
+play-services-home = { group = "com.google.android.gms", name = "play-services-home", version.ref = "playServicesHome" }
+play-services-types = { group = "com.google.android.gms", name = "play-services-home-types", version.ref = "playServicesHome" }
 
 [plugins]
 # Base plugins
