@@ -47,6 +47,7 @@ junit4 = "4.13.2"
 kotlinxCoroutines = "1.11.0"
 kotlinxDatetime = "0.8.0-0.6.x-compat"
 kotlinxSerializationJson = "1.11.0"
+kotlinxCollectionsImmutable = "0.5.0"
 kotlinCompose = "1.11.1"
 javaAnnotations = "26.1.0" # https://github.com/JetBrains/java-annotations
 lint = "32.2.1"
@@ -73,13 +74,22 @@ slf4j = "2.0.18"
 slf4j-timber = "1.2"
 robolectric = "4.16.1"
 skydovesBallon = "1.7.6"
+skydovesCloudy = "0.5.0"
 moshi = "1.15.2"
-koinCore = "4.2.2"
-koinCompose = "4.2.2"
+koin = "4.2.2"
 kmmVoyager = "1.0.1"
 kmmLogs = "2.7.1" # Napier
-gson = "2.14.0"
 fasterxml = "2.13.5" # don't update
+gson = "2.14.0"
+gms-play-services-home = "17.1.0"
+cmptoast = "1.0.71"
+compottie="2.2.4"
+jetbrains-compose = "1.11.1" # https://github.com/JetBrains/compose-multiplatform/releases
+jetbrains-material3 = "1.9.0"
+jetbrains-material3-adaptive-navigation3 = "1.3.0-beta02"
+jetbrains-material-icons-extended = "1.7.3"
+jetbrains-androidx-lifecycle = "2.10.0"
+jetbrains-navigation3-ui = "1.1.1"
 
 # Plugin versions
 nordicPlugins = "3.1.2"
@@ -191,6 +201,7 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 lint-api = { group = "com.android.tools.lint", name = "lint-api", version.ref = "lint" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
@@ -228,15 +239,38 @@ slf4j-timber = { group = "uk.kulikov", name = "slf4j2-timber", version.ref = "sl
 test-mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 test-robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 skydoves-ballon = { group = "com.github.skydoves", name = "balloon-compose", version.ref = "skydovesBallon" }
+skydoves-cloudy = { group = "com.github.skydoves", name = "cloudy", version.ref = "skydovesCloudy" }
 moshi = { group = "com.squareup.moshi", name = "moshi", version.ref = "moshi" }
 moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshi" }
 moshi-adapters = { group = "com.squareup.moshi", name = "moshi-adapters", version.ref = "moshi" }
 moshi-kotlin-codegen = { group = "com.squareup.moshi", name = "moshi-kotlin-codegen", version.ref = "moshi" }
-koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koinCore" }
-koin-compose = { group = "io.insert-koin", name = "koin-compose", version.ref = "koinCompose" }
+koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
+koin-compose = { group = "io.insert-koin", name = "koin-compose", version.ref = "koin" }
+koin-compose-viewmodel = { group = "io.insert-koin", name = "koin-compose-viewmodel", version.ref = "koin" }
+koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
+koin-android-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
 kmm-voyager = { group = "cafe.adriel.voyager", name = "voyager-navigator", version.ref = "kmmVoyager" }
 kmm-logs = { group = "io.github.aakira", name = "napier", version.ref = "kmmLogs" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+cmptoast = { group = "network.chaintech", name = "cmptoast", version.ref = "cmptoast" }
+compottie = { group = "io.github.alexzhirkevich", name = "compottie", version.ref = "compottie" }
+compottie-lite = { group = "io.github.alexzhirkevich", name = "compottie-lite", version.ref = "compottie" }
+compottie-dot = { group = "io.github.alexzhirkevich", name = "compottie-dot", version.ref = "compottie" }
+compottie-network = { group = "io.github.alexzhirkevich", name = "compottie-network", version.ref = "compottie" }
+compottie-resources = { group = "io.github.alexzhirkevich", name = "compottie-resources", version.ref = "compottie" }
+jetbrains-foundation = { group = "org.jetbrains.compose.foundation", name = "foundation", version.ref = "jetbrains-compose" }
+jetbrains-compose-ui = { group = "org.jetbrains.compose.ui", name = "ui", version.ref = "jetbrains-compose" }
+jetbrains-ui-tooling-preview = { group = "org.jetbrains.compose.ui", name = "ui-tooling-preview", version.ref = "jetbrains-compose" }
+jetbrains-compose-resources = { group = "org.jetbrains.compose.components", name = "components-resources", version.ref = "jetbrains-compose" }
+jetbrains-compose-material3 = { group = "org.jetbrains.compose.material3", name = "material3", version.ref = "jetbrains-material3" }
+jetbrains-adaptive-navigation = { group = "org.jetbrains.compose.material3.adaptive", name = "adaptive-navigation3", version.ref = "jetbrains-material3-adaptive-navigation3" }
+jetbrains-icons-extended = { group = "org.jetbrains.compose.material", name = "material-icons-extended", version.ref = "jetbrains-material-icons-extended" }
+jetbrains-compose-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "jetbrains-androidx-lifecycle" }
+jetbrains-compose-runtime = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "jetbrains-androidx-lifecycle" }
+jetbrains-lifecycle-navigation = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-navigation3", version.ref = "jetbrains-androidx-lifecycle" }
+jetbrains-navigation = { group = "org.jetbrains.androidx.navigation3", name = "navigation3-ui", version.ref = "jetbrains-navigation3-ui" }
+play-services-home =  { group = "com.google.android.gms", name = "play-services-home", version.ref = "gms-play-services-home" }
+play-services-types = { group = "com.google.android.gms", name = "play-services-home-types", version.ref = "gms-play-services-home" }
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
