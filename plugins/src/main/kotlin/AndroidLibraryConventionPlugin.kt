@@ -58,6 +58,12 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
 
                 defaultConfig {
                     minSdk = target.minSdk
+
+                    // Without this, AGP 9 would publish minCompileSdk = COMPILE_SDK
+                    // and force every consumer onto the newest platform.
+                    aarMetadata {
+                        minCompileSdk = AppConst.MIN_COMPILE_SDK
+                    }
                 }
 
                 buildFeatures {
