@@ -110,7 +110,7 @@ class PublishJvmConventionPlugin : Plugin<Project> {
                     }
                 }
                 // Set the version.
-                moduleVersion.set(gitVersion)
+                moduleVersion.set(target.provider { nordicPublishing.pomVersionName.orNull ?: gitVersion })
                 // Set the footer message.
                 pluginsConfiguration.named("html", DokkaHtmlPluginParameters::class.java) {
                     val year = Calendar.getInstance().get(Calendar.YEAR)
@@ -141,6 +141,9 @@ class PublishJvmConventionPlugin : Plugin<Project> {
 
             // TODO Remove afterEvaluate when `artifactId` and `groupId` are converted to lazy properties.
             afterEvaluate {
+                val effectiveVersion = nordicPublishing.pomVersionName.orNull ?: gitVersion
+                version = effectiveVersion
+
                 // Configure SPDX SBOM generation.
                 extensions.configure<SpdxSbomExtension> {
                     targets.register("release") {
@@ -184,7 +187,7 @@ class PublishJvmConventionPlugin : Plugin<Project> {
                                 // TODO same here
                                 groupId = pomGroup.getOrElse(group.toString())
                                 // TODO same here
-                                version = gitVersion
+                                version = effectiveVersion
                             }
                             // Set the component to be published.
                             from(components["java"])

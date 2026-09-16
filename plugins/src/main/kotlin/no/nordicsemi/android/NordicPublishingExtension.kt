@@ -56,6 +56,7 @@ abstract class NordicPublishingExtension @Inject constructor(objects: ObjectFact
 
     // Default values:
     val pomGroup: Property<String> = objects.property(String::class.java)
+    val pomVersionName: Property<String> = objects.property(String::class.java)
 
     // License
     val pomLicence: Property<String> = objects.property(String::class.java).convention("BSD-3-Clause")
@@ -100,6 +101,10 @@ abstract class NordicPublishingExtension @Inject constructor(objects: ObjectFact
     var POM_GROUP: String?
         get() = pomGroup.orNull
         set(value) { if (value != null) pomGroup.set(value) }
+
+    var POM_VERSION_NAME: String?
+        get() = pomVersionName.orNull
+        set(value) { if (value != null) pomVersionName.set(value) }
 
     var POM_LICENCE: String
         get() = pomLicence.get()

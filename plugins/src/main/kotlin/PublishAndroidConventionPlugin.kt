@@ -114,7 +114,7 @@ class PublishAndroidConventionPlugin : Plugin<Project> {
                     }
                 }
                 // Set the version.
-                moduleVersion.set(gitVersion)
+                moduleVersion.set(target.provider { nordicPublishing.pomVersionName.orNull ?: gitVersion })
                 // Set the footer message.
                 pluginsConfiguration.named("html", DokkaHtmlPluginParameters::class.java) {
                     val year = Calendar.getInstance().get(Calendar.YEAR)
@@ -145,6 +145,9 @@ class PublishAndroidConventionPlugin : Plugin<Project> {
 
             // TODO Remove afterEvaluate when `artifactId` and `groupId` are converted to lazy properties.
             afterEvaluate {
+                val effectiveVersion = nordicPublishing.pomVersionName.orNull ?: gitVersion
+                version = effectiveVersion
+
                 // Configure SPDX SBOM generation.
                 extensions.configure<SpdxSbomExtension> {
                     targets.register("release") {
@@ -187,7 +190,7 @@ class PublishAndroidConventionPlugin : Plugin<Project> {
                                 // TODO Same here
                                 groupId = pomGroup.getOrElse(group.toString())
                                 // TODO And here
-                                version = gitVersion
+                                version = effectiveVersion
                             }
                             // Set the component to be published.
                             from(components["release"])
