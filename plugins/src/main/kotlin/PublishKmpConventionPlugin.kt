@@ -109,7 +109,7 @@ class PublishKmpConventionPlugin : Plugin<Project> {
                     }
                 }
                 // Set the version.
-                moduleVersion.set(gitVersion)
+                moduleVersion.set(target.provider { nordicPublishing.pomVersionName.orNull ?: gitVersion })
                 // Set the footer message.
                 pluginsConfiguration.named("html", DokkaHtmlPluginParameters::class.java) {
                     val year = Calendar.getInstance().get(Calendar.YEAR)
@@ -139,6 +139,9 @@ class PublishKmpConventionPlugin : Plugin<Project> {
             }
 
             afterEvaluate {
+                val effectiveVersion = nordicPublishing.pomVersionName.orNull ?: gitVersion
+                version = effectiveVersion
+
                 // Configure SPDX SBOM generation, resolved from the jvm target's runtime
                 // classpath as it best represents the full common dependency graph. Not every
                 // KMP module declares a jvm() target, and the other platforms' runtime
@@ -202,7 +205,7 @@ class PublishKmpConventionPlugin : Plugin<Project> {
                             // TODO Use groupId.set(pomGroup) when it is converted to Property
                             groupId = pomGroup.getOrElse(group.toString())
                             // TODO Same here
-                            version = gitVersion
+                            version = effectiveVersion
                             // Unlike single-platform modules, artifactId cannot just be set to
                             // POM_ARTIFACT_ID here: KMP creates one publication per target and they
                             // must keep distinct coordinates. Kotlin has already named them after the
