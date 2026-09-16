@@ -1,8 +1,8 @@
 [versions]
 minSdk = "23"
 androidGradlePlugin = "9.3.1"
-kotlin = "2.4.10" # When changes, update also kotlinAndroid.kt
-ksp = "2.3.11"
+kotlin = "2.4.20" # When changes, update also kotlinAndroid.kt
+ksp = "2.3.12"
 androidxActivity = "1.13.0"
 androidxAnnotation = "1.10.0"
 androidxAppCompat = "1.7.1"
@@ -47,7 +47,7 @@ junit4 = "4.13.2"
 kotlinxCoroutines = "1.11.0"
 kotlinxDatetime = "0.8.0-0.6.x-compat"
 kotlinxSerializationJson = "1.11.0"
-kotlinxCollectionsImmutable = "0.5.1"
+kotlinxCollectionsImmutable = "0.5.2"
 kotlinCompose = "1.11.1"
 javaAnnotations = "26.1.0" # https://github.com/JetBrains/java-annotations
 lint = "32.3.1"
