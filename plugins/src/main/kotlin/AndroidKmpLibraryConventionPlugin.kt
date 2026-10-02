@@ -65,6 +65,12 @@ class AndroidKmpLibraryConventionPlugin : Plugin<Project> {
                         version = release(target.minSdk)
                     }
 
+                    // Without this, AGP 9 would publish minCompileSdk = COMPILE_SDK
+                    // and force every consumer onto the newest platform.
+                    aarMetadata {
+                        minCompileSdk = AppConst.MIN_COMPILE_SDK
+                    }
+
                     @Suppress("UnstableApiUsage")
                     optimization {
                         minify = false
