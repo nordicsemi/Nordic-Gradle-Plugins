@@ -89,7 +89,7 @@ jetbrains-material-icons-extended = "1.7.3"
 jetbrains-androidx-lifecycle = "2.11.0"
 
 # Plugin versions
-nordicPlugins = "3.2"
+nordicPlugins = "3.3"
 dokkaPlugin = "2.2.0"
 googleServicesPlugins = "4.4.2"
 firebaseCrashlyticsPlugins = "3.0.2"
