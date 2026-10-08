@@ -6,32 +6,32 @@ ksp = "2.3.12"
 androidxActivity = "1.11.0" # Don't update
 androidxAnnotation = "1.11.0"
 androidxAppCompat = "1.7.1" # Don't update
-androidxCardview = "1.0.0"
-androidxConstraintlayout = "2.2.2"
+androidxCardview = "1.0.0" # Don't update
+androidxConstraintlayout = "2.2.2" # Don't update
 androidxComposeBom = "2025.10.00" # Don't update, to keep minSdk at 21. https://developer.android.com/jetpack/compose/bom/bom-mapping
 androidxComposeRuntimeTracing = "1.9.5" # Don't update
 androidxCore = "1.17.0" # Don't update
 androidxCoreSplashscreen = "1.2.0"
 androidxDataStore = "1.1.7" # Don't update
 androidxEspresso = "3.7.0"
-androidxFragment = "1.8.9"
+androidxFragment = "1.8.9" # Don't update
 androidxHilt = "1.2.0" # Don't update
 androidxLifecycle = "2.9.4" # Don't update
 androidxLocalbroadcastmanager = "1.1.0"
 # androidxMacroBenchmark = "1.1.0" # All versions are API 23+
 androidxNavigation = "2.9.8"      # https://developer.android.com/jetpack/androidx/releases/navigation
 # androidxNavigation3 uses minSdk = 23
-androidxMetrics = "1.0.0"
+# androidxMetrics = "1.0.0" uses minSdk = 23
 androidxPreference = "1.2.1"
 androidxProfileinstaller = "1.4.1"
 androidxRecyclerview = "1.4.0"
-androidxStartup = "1.2.0"
-androidxSwiperefreshlayout = "1.2.0"
-androidxWindowManager = "1.5.1"
-androidxTestCore = "1.7.0"
-androidxTestExt = "1.3.0"
-androidxTestRunner = "1.7.0"
-androidxTestRules = "1.7.0"
+androidxStartup = "1.2.0" # Don't update
+androidxSwiperefreshlayout = "1.2.0" # Don't update
+androidxWindowManager = "1.4.0" # Don't update
+androidxTestCore = "1.7.0" # Don't update
+androidxTestExt = "1.3.0" # Don't update
+androidxTestRunner = "1.7.0" # Don't update
+androidxTestRules = "1.7.0" # Don't update
 androidxTracing = "1.3.0" # Don't update
 androidxUiAutomator = "2.3.0" # Don't update
 androidxWork = "2.10.5" # Don't update
@@ -151,7 +151,7 @@ androidx-lifecycle-viewModel-ktx = { group = "androidx.lifecycle", name = "lifec
 androidx-lifecycle-viewModel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
 androidx-lifecycle-viewModel-savedState = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-savedstate", version.ref = "androidxLifecycle" }
 androidx-localbroadcastmanager = { group = "androidx.localbroadcastmanager", name = "localbroadcastmanager", version.ref = "androidxLocalbroadcastmanager" }
-androidx-metrics = { group = "androidx.metrics", name = "metrics-performance", version.ref = "androidxMetrics" }
+# androidx-metrics = { group = "androidx.metrics", name = "metrics-performance", version.ref = "androidxMetrics" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxNavigation" }
 androidx-navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "androidxNavigation" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "androidxProfileinstaller" }
