@@ -62,3 +62,17 @@ List of plugins currently available in the repository.
 
 4. [no.nordicsemi.plugin.dokka](plugins/src/main/kotlin/NordicDokkaPlugin.kt)
    Applies `org.jetbrains.dokka` and applies Nordic styles to Dokka documentation.
+
+## Versioning
+
+The plugins use one version name for the app (`versionName`, `BuildConfig.VERSION_NAME`), the Maven
+publication, and the Dokka documentation. It is resolved in this order:
+
+1. The `releaseVersion` Gradle property, e.g. `./gradlew dokkaGenerate -PreleaseVersion=2.0.0-beta08`.
+2. The `RELEASE_VERSION` environment variable.
+3. The latest git tag (`git describe --tags --abbrev=0`). Anything after `%` is ignored.
+4. `0.0.0`, if none of the above is available, e.g. in a shallow clone without tags.
+
+Setting the version explicitly allows building a given version without creating a tag first, and
+running the tests in a shallow clone (`fetch-depth: 1` in GitHub Actions) without any git history.
+A git command that fails is not an error, it is only logged with `--info`.
