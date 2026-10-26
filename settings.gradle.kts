@@ -31,6 +31,13 @@
 
 @file:Suppress("UnstableApiUsage")
 
+plugins {
+    // Lets Gradle download the JDK requested by the Java toolchain (jvmToolchain(21)) from
+    // a toolchain repository (Foojay), if it is not installed. Without it, auto-provisioning
+    // without a toolchain repository is deprecated, and fails in Gradle 10.
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
+
 dependencyResolutionManagement {
     repositories {
         google()
