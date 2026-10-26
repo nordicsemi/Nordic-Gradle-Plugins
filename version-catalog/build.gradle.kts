@@ -36,7 +36,7 @@ plugins {
 }
 apply(from = "../gradle/git-tag-version.gradle.kts")
 
-val versionNameFromTags: String by extra
+val versionNameFromTags = extra["versionNameFromTags"] as String
 
 group = "no.nordicsemi.gradle"
 version = versionNameFromTags
