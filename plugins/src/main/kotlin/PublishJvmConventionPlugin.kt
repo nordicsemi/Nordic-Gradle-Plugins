@@ -32,6 +32,7 @@
 import no.nordicsemi.android.NordicPublishingExtension
 import no.nordicsemi.android.buildlogic.getGitRevision
 import no.nordicsemi.android.buildlogic.getVersionNameFromTags
+import no.nordicsemi.android.buildlogic.hideEnumEntryPages
 import no.nordicsemi.android.fixSpdx
 import no.nordicsemi.android.from
 import no.nordicsemi.android.tasks.ReleaseStagingRepositoriesTask
@@ -100,6 +101,8 @@ class PublishJvmConventionPlugin : Plugin<Project> {
 
             // Instead, configure Dokka to generate HTML docs for the module.
             dokka?.apply {
+                // Hide per-entry pages of enums annotated with @HideEnumEntryPages.
+                hideEnumEntryPages()
                 dokkaSourceSets.configureEach {
                     // Enable Android documentation links.
                     enableAndroidDocumentationLink.set(true)

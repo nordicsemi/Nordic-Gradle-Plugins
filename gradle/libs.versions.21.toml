@@ -275,6 +275,8 @@ kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-pl
 hilt-gradlePlugin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "hilt" }
 dokka-gradlePlugin = { group = "org.jetbrains.dokka", name = "dokka-gradle-plugin", version.ref = "dokkaPlugin" }
 dokka-android-gradlePlugin = { group = "org.jetbrains.dokka", name = "android-documentation-plugin", version.ref = "dokkaPlugin" }
+dokka-core = { group = "org.jetbrains.dokka", name = "dokka-core", version.ref = "dokkaPlugin" }
+dokka-base = { group = "org.jetbrains.dokka", name = "dokka-base", version.ref = "dokkaPlugin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 spdx-gradlePlugin = { group = "org.spdx", name = "spdx-gradle-plugin", version.ref = "spdxPlugin" }
 
