@@ -1,15 +1,14 @@
 [versions]
 minSdk = "21"
-androidGradlePlugin = "9.4.1"
+androidGradlePlugin = "9.5.3"
 kotlin = "2.4.21" # When changes, update also kotlinAndroid.kt
-ksp = "2.3.12"
+ksp = "2.3.14"
 androidxActivity = "1.11.0" # Don't update
 androidxAnnotation = "1.11.0"
 androidxAppCompat = "1.7.1" # Don't update
 androidxCardview = "1.0.0" # Don't update
 androidxConstraintlayout = "2.2.2" # Don't update
 androidxComposeBom = "2025.10.00" # Don't update, to keep minSdk at 21. https://developer.android.com/jetpack/compose/bom/bom-mapping
-androidxComposeRuntimeTracing = "1.9.5" # Don't update
 androidxCore = "1.17.0" # Don't update
 androidxCoreSplashscreen = "1.2.0"
 androidxDataStore = "1.1.7" # Don't update
@@ -49,13 +48,13 @@ kotlinxDatetime = "0.8.0-0.6.x-compat"
 kotlinxSerializationJson = "1.12.0"
 kotlinxCollectionsImmutable = "0.5.2"
 javaAnnotations = "26.1.0" # https://github.com/JetBrains/java-annotations
-lint = "32.4.1"
+lint = "32.5.3"
 material = "1.13.0" # Don't update. Version 1.14.0 increases minSdk to 23.
 memfault-cloud = "2.1.0"
 okhttp = "5.5.1"
 okio = "3.18.2"
 protobuf = "4.36.2"
-protobufPlugin = "0.10.0"
+protobufPlugin = "0.10.1"
 publishPlugin = "2.2.1"
 retrofit = "3.0.0"
 room = "2.7.2" # Don't update
@@ -63,15 +62,15 @@ paging = "3.3.6" # Don't update
 secrets = "2.0.1"
 turbine = "1.2.1"
 markdown = "0.5.7" # https://github.com/jeziellago/compose-markdown/releases
-wirePlugin = "7.1.0"
+wirePlugin = "7.2.2"
 timber = "5.0.1"
 chart = "v3.1.0"
 leakcanary = "2.14"
-mockk = "1.14.11"
+mockk = "1.14.12"
 truth = "1.4.5"
 slf4j = "2.0.20"
 slf4j-timber = "1.2"
-robolectric = "4.17"
+robolectric = "4.18.1"
 skydovesBallon = "1.6.13" # Don't update
 skydovesCloudy = "0.2.7" # Don't update
 moshi = "1.15.2"
@@ -90,7 +89,7 @@ jetbrains-androidx-lifecycle = "2.11.0"
 
 # Plugin versions
 nordicPlugins = "3.3.1"
-dokkaPlugin = "2.2.0"
+dokkaPlugin = "2.3.0"
 googleServicesPlugins = "4.4.2"
 firebaseCrashlyticsPlugins = "3.0.2"
 kmmIosPublishPlugin = "2.0.3"
@@ -124,7 +123,7 @@ androidx-compose-material3-adaptive-navigation = { group = "androidx.compose.mat
 androidx-compose-material3-adaptive-navigation-suite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite" }
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
 androidx-compose-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata" }
-androidx-compose-runtime-tracing = { group = "androidx.compose.runtime", name = "runtime-tracing", version.ref = "androidxComposeRuntimeTracing" }
+androidx-compose-runtime-tracing = { group = "androidx.compose.runtime", name = "runtime-tracing" }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-compose-ui-test = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-ui-testManifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
