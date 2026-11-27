@@ -41,11 +41,14 @@ import org.gradle.kotlin.dsl.dependencies
  *
  * The Dokka plugin is shipped inside the Nordic Gradle plugins artifact, so it is added to the
  * `dokkaPlugin` configuration from the location it was loaded from.
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 fun Project.hideEnumEntryPages() {
     val location = NoEnumEntryPagesPlugin::class.java.protectionDomain.codeSource.location
     dependencies {
         add("dokkaPlugin", files(location))
+        // Not every project type has a top-level compileOnly (e.g. KMP uses source sets).
+        if (configurations.findByName("compileOnly") != null) {
+            add("compileOnly", files(location))
+        }
     }
 }

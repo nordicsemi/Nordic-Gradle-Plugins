@@ -43,24 +43,18 @@ import org.jetbrains.dokka.plugability.DokkaPluginApiPreview
 import org.jetbrains.dokka.plugability.PluginApiPreviewAcknowledgement
 import org.jetbrains.dokka.transformers.pages.PageTransformer
 
-/**
- * Simple name of the annotation that opts an enum class out of per-entry pages.
- *
- * The annotation is declared in the documented module, e.g. `@HideEnumEntryPages`.
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+private const val ANNOTATION_PACKAGE = "no.nordicsemi.android.dokka"
 private const val ANNOTATION_NAME = "HideEnumEntryPages"
 
 /**
  * Dokka plugin that stops a separate page from being generated for each entry of enum classes
- * annotated with `@HideEnumEntryPages`.
+ * annotated with [HideEnumEntryPages].
  *
  * The entries are still listed in the "Entries" table of the enum class page, but are no longer
  * links to their own pages. Enums without the annotation are documented as usual.
  *
  * This runs inside Dokka, not Gradle. It is added to the `dokkaPlugin` configuration by the
  * Nordic convention plugins.
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 class NoEnumEntryPagesPlugin : DokkaPlugin() {
 
@@ -87,5 +81,5 @@ private object EnumEntryPageRemover : PageTransformer {
 
     private fun Any.isAnnotated() = this is DEnum && extra[Annotations]
         ?.directAnnotations?.values?.flatten()
-        ?.any { it.dri.classNames == ANNOTATION_NAME } == true
+        ?.any { it.dri.packageName == ANNOTATION_PACKAGE && it.dri.classNames == ANNOTATION_NAME } == true
 }
