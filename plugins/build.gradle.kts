@@ -67,6 +67,9 @@ dependencies {
     implementation(libs.jetbrains.compose.gradlePlugin)
     implementation(libs.dokka.gradlePlugin)
     implementation(libs.dokka.android.gradlePlugin)
+    // Needed to compile the Dokka plugin; at runtime Dokka provides them.
+    compileOnly(libs.dokka.core)
+    compileOnly(libs.dokka.base)
     implementation(libs.spdx.gradlePlugin)
 }
 
