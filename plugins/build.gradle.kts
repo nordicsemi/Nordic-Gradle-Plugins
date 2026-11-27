@@ -70,6 +70,10 @@ dependencies {
     // Needed to compile the Dokka plugin; at runtime Dokka provides them.
     compileOnly(libs.dokka.core)
     compileOnly(libs.dokka.base)
+
+    testImplementation(libs.dokka.core)
+    testImplementation(libs.dokka.base)
+    testImplementation(libs.junit4)
     implementation(libs.spdx.gradlePlugin)
 }
 

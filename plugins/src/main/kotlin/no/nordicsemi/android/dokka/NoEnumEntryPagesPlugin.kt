@@ -67,7 +67,7 @@ class NoEnumEntryPagesPlugin : DokkaPlugin() {
     override fun pluginApiPreviewAcknowledgement() = PluginApiPreviewAcknowledgement
 }
 
-private object EnumEntryPageRemover : PageTransformer {
+internal object EnumEntryPageRemover : PageTransformer {
 
     override fun invoke(input: RootPageNode): RootPageNode = input.strip() as RootPageNode
 
